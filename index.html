@@ -442,16 +442,37 @@
         .fw-row:hover { padding-left: 18px; }
         .fw-row > div:first-child { transition: transform .18s ease; }
         .fw-row:hover > div:first-child { transform: translateX(4px); }
-        /* Cronômetro minimalista */
-        .ls-timer { display: inline-flex; align-items: center; gap: 2px; padding: 3px 6px 3px 10px; border-radius: 16px; border: 1px solid #cbd5e1; }
-        .dark .ls-timer { border-color: #475569; }
-        .ls-timer input { width: 58px; background: transparent; border: 0; outline: none; text-align: center; border-radius: 8px; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; color: #1e293b; }
-        .dark .ls-timer input { color: #fff; }
-        .ls-timer input:focus { background: rgba(148,163,184,.2); }
-        .ls-timer button { width: 30px; height: 30px; border-radius: 999px; border: 0; background: transparent; color: #64748b; font-size: 12px; cursor: pointer; outline: none; transition: background-color .15s ease, color .15s ease; }
-        .ls-timer button:hover { background: rgba(148,163,184,.22); color: var(--c, #2563eb); }
-        .ls-timer.done { border-color: #ef4444; animation: lsShake .5s ease; }
-        .ls-timer.done input { color: #ef4444; }
+        /* Ícone do guia (discreto, à direita) */
+        .ls-guide-ic { margin-left: auto; width: 30px; height: 30px; border-radius: 999px; border: 0; background: transparent; color: #94a3b8; font-size: 15px; cursor: pointer; outline: none; display: inline-flex; align-items: center; justify-content: center; align-self: center; transition: background .15s, color .15s, transform .15s; }
+        .ls-guide-ic:hover { background: rgba(148,163,184,.22); color: var(--c, #2563eb); }
+        .ls-guide-ic:active { transform: scale(.9); }
+        /* Cronômetro de descanso */
+        .ls-t2 { margin-top: 12px; border: 1px solid #cbd5e1; border-radius: 16px; background: rgba(148,163,184,.08); padding: 6px 10px 0; overflow: hidden; transition: border-color .2s, background .2s; }
+        .dark .ls-t2 { border-color: #475569; }
+        .ls-t2-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-bottom: 8px; }
+        .ls-t2-ico { color: #94a3b8; font-size: 15px; margin: 0 0 0 4px; }
+        .ls-t2 input { width: 92px; background: transparent; border: 0; outline: none; text-align: center; border-radius: 10px; font-size: 28px; line-height: 1.1; padding: 2px 0; font-weight: 900; font-variant-numeric: tabular-nums; color: #0f172a; transition: color .3s; }
+        .dark .ls-t2 input { color: #fff; }
+        .ls-t2 input:focus { background: rgba(148,163,184,.2); }
+        .ls-t2-play { width: 40px; height: 40px; border-radius: 999px; border: 0; background: var(--c, #2563eb); color: #fff; font-size: 14px; cursor: pointer; outline: none; box-shadow: 0 8px 16px -8px var(--c, #2563eb); transition: transform .15s; }
+        .ls-t2-play:hover { transform: scale(1.08); } .ls-t2-play:active { transform: scale(.92); }
+        .ls-t2-b { height: 30px; min-width: 30px; padding: 0 8px; border-radius: 10px; border: 0; background: transparent; color: #64748b; font-size: 11px; font-weight: 800; cursor: pointer; outline: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px; transition: background .15s, color .15s, opacity .15s; }
+        .ls-t2-b:hover { background: rgba(148,163,184,.22); color: var(--c, #2563eb); }
+        .ls-t2-b.on { background: var(--c, #2563eb); color: #fff; }
+        .ls-t2-b.off { opacity: .45; }
+        .ls-t2-p { height: 26px; padding: 0 9px; border-radius: 999px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; cursor: pointer; outline: none; transition: background .15s, color .15s, border-color .15s; }
+        .dark .ls-t2-p { border-color: #475569; }
+        .ls-t2-p:hover { border-color: var(--c, #2563eb); color: var(--c, #2563eb); }
+        .ls-t2-p.on { background: var(--c, #2563eb); border-color: var(--c, #2563eb); color: #fff; }
+        .ls-t2-sep { width: 1px; height: 20px; background: #cbd5e1; margin: 0 4px; }
+        .dark .ls-t2-sep { background: #475569; }
+        .ls-t2-grow { flex: 1 1 0; }
+        .ls-t2-bar { height: 4px; margin: 0 -10px; background: rgba(148,163,184,.25); }
+        .ls-t2-bar i { display: block; height: 100%; width: 100%; background: var(--c, #2563eb); transition: width .25s linear, background .3s; }
+        .ls-t2.run { border-color: var(--c, #2563eb); }
+        .ls-t2.warn .ls-t2-bar i { background: #f59e0b; } .ls-t2.warn input { color: #d97706; }
+        .ls-t2.fin { border-color: #ef4444; background: rgba(239,68,68,.08); } .ls-t2.fin input { color: #ef4444; }
+        .ls-t2.shake { animation: lsShake .5s ease; }
         @keyframes lsShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
 
         #weeklyGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); grid-auto-rows: auto; align-items: stretch; gap: 18px; }
@@ -860,10 +881,7 @@
 
             <div id="fullWeekList" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4 items-start pr-2 my-2"></div>
 
-            <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500"><i class="fa-solid fa-hand-pointer mr-1"></i>Clique num dia para ir até ele, ou em "Abrir" para acompanhar o treino série a série.</span>
-                <button onclick="closeFullWeek()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition active:scale-95">Fechar</button>
-            </div>
+            <p class="pt-1 text-center text-[10px] leading-tight font-medium text-slate-400/80 dark:text-slate-500/80 shrink-0">Clique num dia para ir até ele · "Abrir" inicia o treino</p>
         </div>
     </div>
 
@@ -2660,58 +2678,130 @@
             if (n >= p.sets) return;
             liveSt.sets[ex.id] = n + 1; livePop = ex.id + ':' + n;
             if (n + 1 >= p.sets) { liveMark(ex.id, true); liveSt.cur = liveNextIdx(liveSt.cur); }
-            liveSave(); renderLive();
+            liveSave();
+            if (liveTAuto && liveSt.cur >= 0) liveTimerStart();
+            renderLive();
         }
         function liveUndoSet() {
             let i = liveSt.cur < 0 ? liveEx.length - 1 : liveSt.cur, ex = liveEx[i], n = liveSt.sets[ex.id] || 0;
             if (n === 0 && i > 0) { i--; ex = liveEx[i]; n = liveSt.sets[ex.id] || 0; }
             liveSt.cur = i; liveSt.sets[ex.id] = Math.max(0, n - 1); liveMark(ex.id, false); liveSave(); renderLive();
         }
-        function liveSkip() { const n = liveNextIdx(liveSt.cur); if (n >= 0) { liveSt.cur = n; liveSave(); renderLive(); } }
         function liveGoEx(i) { liveSt.cur = i; liveSave(); renderLive(); }
         function liveGoSet(k) { const ex = liveEx[liveSt.cur]; liveSt.sets[ex.id] = k; liveMark(ex.id, false); liveSave(); renderLive(); }
         function liveRestart() { liveSt = { date: todayKey(), cur: 0, sets: {} }; saveDoneSet(liveSlotId, new Set()); liveSave(); renderLive(); }
 
-        // ---- Cronômetro regressivo (editável) ----
-        let liveTDur = 60;
-        try { liveTDur = Math.min(5999, Math.max(1, parseInt(localStorage.getItem('calistenia_timer_v1'), 10) || 60)); } catch (e) {}
-        let liveTLeft = liveTDur, liveTRun = false, liveTEnd = 0, liveTInt = null;
+        // ---- Cronômetro de descanso (regressivo): predefinições, ±15 s, barra de progresso, som e início automático ----
+        let liveTDur = 60, liveTSound = true, liveTAuto = false;
+        try {
+            liveTDur = Math.min(5999, Math.max(1, parseInt(localStorage.getItem('calistenia_timer_v1'), 10) || 60));
+            liveTSound = localStorage.getItem('calistenia_timer_snd') !== '0';
+            liveTAuto = localStorage.getItem('calistenia_timer_auto') === '1';
+        } catch (e) {}
+        let liveTLeft = liveTDur, liveTRun = false, liveTEnd = 0, liveTInt = null, liveTMs = 0, liveTTotal = liveTDur, liveTFin = false, liveTLastSec = -1, liveAC = null;
+        const LIVE_PRESETS = [[30, '30s'], [60, '1:00'], [120, '2:00'], [180, '3:00'], [240, '4:00']];
         function liveFmt(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+        function liveTSaveCfg() { try { localStorage.setItem('calistenia_timer_v1', liveTDur); localStorage.setItem('calistenia_timer_snd', liveTSound ? '1' : '0'); localStorage.setItem('calistenia_timer_auto', liveTAuto ? '1' : '0'); } catch (e) {} }
+        function liveAudioInit() {
+            try { if (!liveAC) liveAC = new (window.AudioContext || window.webkitAudioContext)(); if (liveAC.state === 'suspended') liveAC.resume(); } catch (e) {}
+        }
+        function liveBeep(freq, dur, delay) {
+            if (!liveTSound) return;
+            try {
+                liveAudioInit(); if (!liveAC) return;
+                const t0 = liveAC.currentTime + (delay || 0), o = liveAC.createOscillator(), g = liveAC.createGain();
+                o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.28, t0 + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                o.connect(g); g.connect(liveAC.destination); o.start(t0); o.stop(t0 + dur + 0.03);
+            } catch (e) {}
+        }
         function liveTimerHtml() {
-            return `<div class="ls-timer" id="liveTimer"><input id="liveTimerInput" type="text" inputmode="numeric" maxlength="5" value="${liveFmt(liveTLeft)}" title="Clique para editar (mm:ss ou segundos)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()" onchange="liveTimerEdit(this.value)"><button type="button" id="liveTimerBtn" onclick="liveTimerToggle()" title="Iniciar / pausar"><i class="fa-solid ${liveTRun ? 'fa-pause' : 'fa-play'}"></i></button><button type="button" onclick="liveTimerReset()" title="Zerar"><i class="fa-solid fa-rotate-left"></i></button></div>`;
+            const pre = LIVE_PRESETS.map(([s, l]) => `<button type="button" class="ls-t2-p${liveTDur === s ? ' on' : ''}" data-s="${s}" onclick="liveTimerPreset(${s})" title="Descanso de ${l}">${l}</button>`).join('');
+            return `<div class="ls-t2" id="liveTimer"><div class="ls-t2-row">`
+                + `<i class="fa-solid fa-stopwatch ls-t2-ico"></i>`
+                + `<input id="liveTimerInput" type="text" inputmode="numeric" maxlength="5" value="${liveFmt(liveTLeft)}" title="Clique para editar (mm:ss ou segundos)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()" onchange="liveTimerEdit(this.value)">`
+                + `<button type="button" id="liveTimerBtn" class="ls-t2-play" onclick="liveTimerToggle()" title="Iniciar / pausar"><i class="fa-solid ${liveTRun ? 'fa-pause' : 'fa-play'}"></i></button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerReset()" title="Zerar"><i class="fa-solid fa-rotate-left"></i></button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(-15)" title="Tirar 15 segundos">−15</button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(15)" title="Somar 15 segundos">+15</button>`
+                + `<span class="ls-t2-sep"></span>${pre}<span class="ls-t2-grow"></span>`
+                + `<button type="button" id="liveTimerSnd" class="ls-t2-b" onclick="liveTimerSoundToggle()" title="Som ao terminar"><i class="fa-solid fa-volume-high"></i></button>`
+                + `<button type="button" id="liveTimerAuto" class="ls-t2-b" onclick="liveTimerAutoToggle()" title="Descanso automático: inicia sozinho ao concluir cada série"><i class="fa-solid fa-bolt"></i><span>Auto</span></button>`
+                + `</div><div class="ls-t2-bar"><i id="liveTimerBar"></i></div></div>`;
         }
         function liveTimerPaint(force) {
+            const t = document.getElementById('liveTimer'); if (!t) return;
             const i = document.getElementById('liveTimerInput');
             if (i && (force || document.activeElement !== i)) i.value = liveFmt(liveTLeft);
             const b = document.querySelector('#liveTimerBtn i');
             if (b) b.className = 'fa-solid ' + (liveTRun ? 'fa-pause' : 'fa-play');
+            t.classList.toggle('run', liveTRun);
+            t.classList.toggle('warn', liveTRun && liveTLeft <= 10 && liveTLeft > 0);
+            t.classList.toggle('fin', liveTFin);
+            const bar = document.getElementById('liveTimerBar');
+            if (bar) {
+                let f = 1;
+                if (liveTFin) f = 0;
+                else if (liveTRun) f = liveTMs / (liveTTotal * 1000);
+                else if (liveTLeft < liveTDur) f = liveTLeft / liveTTotal;
+                bar.style.width = (Math.max(0, Math.min(1, f)) * 100) + '%';
+            }
+            t.querySelectorAll('.ls-t2-p').forEach(x => x.classList.toggle('on', +x.dataset.s === liveTDur));
+            const sn = document.getElementById('liveTimerSnd'), au = document.getElementById('liveTimerAuto');
+            if (sn) { sn.classList.toggle('off', !liveTSound); sn.querySelector('i').className = 'fa-solid ' + (liveTSound ? 'fa-volume-high' : 'fa-volume-xmark'); }
+            if (au) au.classList.toggle('on', liveTAuto);
         }
         function liveTimerEdit(v) {
             const t = String(v).trim(), m = t.match(/^(\d+)\s*[:.,]\s*(\d{1,2})$/);
             let s = m ? (+m[1] * 60 + +m[2]) : parseInt(t, 10);
             if (!(s > 0)) s = liveTDur;
-            liveTDur = Math.min(5999, s);
-            try { localStorage.setItem('calistenia_timer_v1', liveTDur); } catch (e) {}
+            liveTDur = Math.min(5999, s); liveTSaveCfg();
             liveTimerReset();
         }
-        function liveTimerReset() { clearInterval(liveTInt); liveTRun = false; liveTLeft = liveTDur; liveTimerPaint(true); }
+        function liveTimerPreset(s) { liveTDur = s; liveTSaveCfg(); liveTimerReset(); }
+        function liveTimerReset() { clearInterval(liveTInt); liveTRun = false; liveTFin = false; liveTLeft = liveTDur; liveTTotal = liveTDur; liveTLastSec = -1; liveTimerPaint(true); }
+        function liveTimerStart() {
+            clearInterval(liveTInt);
+            liveTLeft = liveTDur; liveTTotal = liveTDur; liveTFin = false; liveTLastSec = -1;
+            liveTEnd = Date.now() + liveTLeft * 1000; liveTMs = liveTLeft * 1000; liveTRun = true;
+            liveAudioInit();
+            liveTInt = setInterval(liveTimerTick, 200);
+            liveTimerPaint(true);
+        }
         function liveTimerToggle() {
-            if (liveTRun) { clearInterval(liveTInt); liveTRun = false; }
-            else {
-                if (liveTLeft <= 0) liveTLeft = liveTDur;
-                liveTEnd = Date.now() + liveTLeft * 1000; liveTRun = true;
-                liveTInt = setInterval(liveTimerTick, 200);
+            if (liveTRun) { clearInterval(liveTInt); liveTRun = false; liveTimerPaint(true); return; }
+            if (liveTFin || liveTLeft <= 0 || liveTLeft >= liveTDur) { liveTimerStart(); return; }
+            liveTEnd = Date.now() + liveTLeft * 1000; liveTMs = liveTLeft * 1000; liveTRun = true;
+            liveAudioInit();
+            liveTInt = setInterval(liveTimerTick, 200);
+            liveTimerPaint(true);
+        }
+        function liveTimerAdd(d) {
+            if (liveTRun) {
+                const rem = Math.min(5999000, Math.max(1000, liveTEnd - Date.now() + d * 1000));
+                liveTEnd = Date.now() + rem; liveTMs = rem; liveTLeft = Math.ceil(rem / 1000);
+                if (d > 0) liveTTotal = Math.max(liveTTotal, liveTLeft);
+            } else if (liveTFin || liveTLeft >= liveTDur) {
+                liveTDur = Math.min(5999, Math.max(5, liveTDur + d)); liveTSaveCfg(); liveTimerReset(); return;
+            } else {
+                liveTLeft = Math.min(5999, Math.max(1, liveTLeft + d)); liveTTotal = Math.max(liveTTotal, liveTLeft);
             }
             liveTimerPaint(true);
         }
+        function liveTimerSoundToggle() { liveTSound = !liveTSound; liveTSaveCfg(); if (liveTSound) liveBeep(880, 0.12); liveTimerPaint(); }
+        function liveTimerAutoToggle() { liveTAuto = !liveTAuto; liveTSaveCfg(); liveTimerPaint(); }
         function liveTimerTick() {
-            liveTLeft = Math.max(0, Math.ceil((liveTEnd - Date.now()) / 1000));
-            liveTimerPaint();
-            if (liveTLeft > 0) return;
-            clearInterval(liveTInt); liveTRun = false; liveTimerPaint(true);
-            if (navigator.vibrate) navigator.vibrate(200);
+            liveTMs = Math.max(0, liveTEnd - Date.now());
+            liveTLeft = Math.ceil(liveTMs / 1000);
+            if (liveTLeft > 0 && liveTLeft <= 3 && liveTLeft !== liveTLastSec) liveBeep(700, 0.09);
+            liveTLastSec = liveTLeft;
+            if (liveTLeft > 0) { liveTimerPaint(); return; }
+            clearInterval(liveTInt); liveTRun = false; liveTFin = true;
+            liveBeep(1100, 0.18, 0); liveBeep(1100, 0.18, 0.26); liveBeep(1400, 0.32, 0.52);
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            liveTimerPaint(true);
             const t = document.getElementById('liveTimer');
-            if (t) { t.classList.remove('done'); void t.offsetWidth; t.classList.add('done'); }
+            if (t) { t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake'); }
         }
 
         function renderLive() {
@@ -2732,7 +2822,7 @@
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3"><span class="text-xs font-bold ${c.text}">${escHtml(ex.id)} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}<span class="fw-scheme ml-auto">${formatScheme(liveTxt(ex))}</span></div>
                     <div class="flex flex-wrap gap-2"><div class="ls-box"><small>Série atual</small>${cd ? '<b>✔</b><em>Exercício concluído</em>' : `<b>${sd + 1}</b><span class="of">de ${p.sets}</span>`}</div><div class="ls-box"><small>Meta por série</small><b style="font-size:26px">${escHtml(liveTarget(p))}</b>${p.target && p.note ? `<em>${escHtml(p.note)}</em>` : ''}</div></div>
                     <div class="ls-sets">${chips}</div>
-                    <div class="ls-actions">${cd ? `<button type="button" class="ls-btn" onclick="liveGoSet(0)"><i class="fa-solid fa-rotate-left"></i> Refazer exercício</button>${nx >= 0 ? `<button type="button" class="ls-btn sec" onclick="liveGoEx(${nx})">Próximo exercício</button>` : ''}` : `<button type="button" class="ls-btn" onclick="liveCompleteSet()"><i class="fa-solid fa-check"></i> ${label}</button><button type="button" class="ls-btn sec" onclick="liveUndoSet()" ${cur === 0 && sd === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i> Voltar</button><button type="button" class="ls-btn sec" onclick="liveSkip()" ${nx < 0 ? 'disabled' : ''}><i class="fa-solid fa-forward"></i> Pular</button>`}<button type="button" class="ls-btn sec" onclick="openDetailModal('${ex.id}')"><i class="fa-solid fa-circle-info"></i> Guia</button>${liveTimerHtml()}</div></div></div>`;
+                    <div class="ls-actions">${cd ? `<button type="button" class="ls-btn" onclick="liveGoSet(0)"><i class="fa-solid fa-rotate-left"></i> Refazer exercício</button>${nx >= 0 ? `<button type="button" class="ls-btn sec" onclick="liveGoEx(${nx})">Próximo exercício</button>` : ''}` : `<button type="button" class="ls-btn" onclick="liveCompleteSet()"><i class="fa-solid fa-check"></i> ${label}</button><button type="button" class="ls-btn sec" onclick="liveUndoSet()" ${cur === 0 && sd === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i> Voltar</button>`}<button type="button" class="ls-guide-ic" onclick="openDetailModal('${ex.id}')" title="Guia de execução" aria-label="Guia de execução"><i class="fa-solid fa-circle-info"></i></button></div>${liveTimerHtml()}</div></div>`;
                 const nE = nx >= 0 ? liveEx[nx] : null, pv = cur > 0 ? cur - 1 : -1, pE = pv >= 0 ? liveEx[pv] : null;
                 const prevCard = pE
                     ? `<button type="button" class="ls-next prev" style="--c:${col(pE).solid}" onclick="liveGoEx(${pv})" title="Voltar para o exercício anterior"><span class="ls-ix">${pv + 1}</span><span class="min-w-0"><small><i class="fa-solid fa-chevron-left"></i>Exercício anterior</small><b>${escHtml(pE.name)}</b><em>${escHtml(pE.id)} · ${catShort(pE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(pE))}</span></button>`
@@ -2743,6 +2833,7 @@
                 main += `<div class="ls-nav">${prevCard}${nextCard}</div>`;
             }
             document.getElementById('liveMain').innerHTML = main;
+            liveTimerPaint(true);
             const r = document.getElementById('liveRoute'), sc = r.scrollTop;
             r.innerHTML = liveEx.map((ex, i) => {
                 const p = liveP(ex), s = Math.min(liveSt.sets[ex.id] || 0, p.sets), d = s >= p.sets;
