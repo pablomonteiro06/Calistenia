@@ -180,6 +180,8 @@
         .csel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c, #94a3b8); flex-shrink: 0; margin: 0 5px; }
 
         /* === MONTADOR DE TREINO: animações e interação === */
+        @keyframes exFlash { 0% { box-shadow: 0 0 0 0 rgba(57,255,20,.9); } 40% { box-shadow: 0 0 0 8px rgba(57,255,20,.45); } 100% { box-shadow: 0 0 0 0 rgba(57,255,20,0); } }
+        .ex-flash { animation: exFlash 1.1s ease-out 2; outline: 2px solid #39ff14; outline-offset: 2px; }
         @keyframes bldBackdropIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes bldBackdropOut { from { opacity: 1; } to { opacity: 0; } }
         @keyframes bldPanelIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: none; } }
@@ -337,16 +339,67 @@
         .fw-row:hover .fw-scheme { transform: scale(1.06); }
         .fw-empty { padding: 18px 16px; font-size: 12px; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
 
+
+        /* === SEMANA: LAYOUT SEM SOBREPOSIÇÃO + DESIGN === */
+        /* Causa da sobreposição: linhas da grade eram comprimidas quando a lista rolava; agora cada linha tem sempre a altura do conteúdo */
+        #fullWeekList { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); grid-auto-rows: max-content; align-content: start; align-items: stretch; gap: 18px; padding: 6px 8px 10px 4px; }
+        #fullWeekList .fw-card { min-width: 0; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 20px -14px rgba(15,23,42,.35); }
+        .dark #fullWeekList .fw-card { box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 24px -16px rgba(0,0,0,.7); }
+        #fullWeekList .fw-card.today { box-shadow: 0 0 0 2px var(--c), 0 12px 26px -14px var(--c); }
+        #fullWeekList .fw-card > div:last-child { flex: 1; }
+        .fw-head { padding: 15px 18px; box-shadow: inset 0 -1px 0 rgba(0,0,0,.12); }
+        .fw-title h4 { font-size: 15px; letter-spacing: .01em; }
+        .fw-row { padding: 11px 18px; }
+        .fw-row:nth-child(even) { background: rgba(100,116,139,.06); }
+        .fw-row:hover { padding-left: 22px; }
+        .fw-name { line-height: 1.25; }
+        .fw-note { padding: 9px 18px; }
+        .fw-days { gap: 10px; padding: 6px 4px 12px; }
+        .fw-day { flex: 1 0 64px; padding: 9px 6px; }
+
+        #weeklyGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); grid-auto-rows: auto; align-items: stretch; gap: 18px; }
+        #weeklyGrid > .slot-card { min-width: 0; }
+        .slot-card { border-radius: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 20px -16px rgba(15,23,42,.4); }
+        .slot-card:hover { transform: translateY(-3px); z-index: 1; }
+        .slot-card.slot-today { box-shadow: 0 0 0 2px var(--accent, #2563eb), 0 12px 26px -14px var(--accent, #2563eb); }
+        @keyframes slotPop { 0% { opacity: .75; transform: translateY(3px); } 100% { opacity: 1; transform: none; } }
+
         /* === ABAS DE CATEGORIA DO CATÁLOGO === */
-        .cat-btn { background:#f1f5f9; color:#334155; border:1px solid transparent; outline:none; cursor:pointer; user-select:none; -webkit-user-select:none;
-                   transition: transform .15s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease, filter .2s ease; }
-        .dark .cat-btn { background:#334155; color:#cbd5e1; }
-        .cat-btn:hover { background:#e2e8f0; transform: scale(1.04); }
-        .dark .cat-btn:hover { background:#475569; }
+        /* Cada aba: chip de ícone + nome + contador. A aba ativa fica preenchida com a cor da categoria
+           e ganha uma "silhueta": um anel fino, afastado ~6px (≈1,5 mm) da borda da aba. */
+        .cat-btn { --r: 14px; --ring-gap: 6px; position: relative; display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px 8px 8px;
+                   border-radius: var(--r); font-size: 13px; font-weight: 800; letter-spacing: .01em; color: #334155; outline: none; cursor: pointer;
+                   user-select: none; -webkit-user-select: none;
+                   background: color-mix(in srgb, var(--cat) 8%, #ffffff);
+                   border: 1px solid color-mix(in srgb, var(--cat) 24%, transparent);
+                   box-shadow: 0 1px 2px rgba(15,23,42,.06);
+                   transition: transform .18s ease, background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
+        .dark .cat-btn { color: #e2e8f0; background: color-mix(in srgb, var(--cat) 14%, #0f172a); border-color: color-mix(in srgb, var(--cat) 30%, transparent); box-shadow: none; }
+
+        /* Silhueta: anel afastado da aba */
+        .cat-btn::after { content: ""; position: absolute; inset: calc(var(--ring-gap) * -1 - 1px); border-radius: calc(var(--r) + var(--ring-gap));
+                          border: 2px solid var(--cat); opacity: 0; transform: scale(.93); pointer-events: none;
+                          transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+        .cat-btn:hover:not(.active) { transform: translateY(-2px); border-color: var(--cat); box-shadow: 0 10px 18px -12px var(--cat); }
+        .cat-btn:hover:not(.active)::after { opacity: .32; transform: scale(1); }
+        .cat-btn:focus-visible::after { opacity: 1; transform: scale(1); border-style: dashed; }
         .cat-btn:active { transform: scale(.96); }
-        .cat-btn:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,.35); }
-        .cat-btn.active, .dark .cat-btn.active { background: var(--cat, #2563eb); color:#fff; box-shadow: 0 8px 16px -8px var(--cat, #2563eb); }
-        .cat-btn.active:hover, .dark .cat-btn.active:hover { background: var(--cat, #2563eb); filter: brightness(1.1); }
+        .cat-btn.active, .dark .cat-btn.active { color: #fff; border-color: transparent;
+                          background: linear-gradient(135deg, var(--cat), color-mix(in srgb, var(--cat) 72%, #ffffff));
+                          box-shadow: 0 12px 20px -12px var(--cat); }
+        .cat-btn.active::after { opacity: 1; transform: scale(1); box-shadow: 0 0 16px -3px color-mix(in srgb, var(--cat) 60%, transparent); }
+
+        .cat-ico { width: 30px; height: 30px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 2px;
+                   font-size: 16px; color: var(--cat); background: color-mix(in srgb, var(--cat) 15%, transparent); transition: background-color .25s ease, color .25s ease, transform .25s ease; }
+        .cat-btn:hover .cat-ico { transform: scale(1.08) rotate(-4deg); }
+        .cat-btn.active .cat-ico { color: #fff; background: rgba(255,255,255,.24); }
+        .cat-label small { font-size: 9px; font-weight: 800; letter-spacing: .08em; margin-left: 5px; opacity: .55; }
+        .cat-btn.active .cat-label small { opacity: .8; }
+        .cat-count { min-width: 26px; height: 21px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+                     font-size: 11px; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--cat); background: color-mix(in srgb, var(--cat) 15%, transparent);
+                     transition: background-color .25s ease, color .25s ease; }
+        .cat-btn.active .cat-count { color: #fff; background: rgba(255,255,255,.26); }
+        #categoryTabs { padding: 8px; }
 
         /* === AGENDA SEMANAL: CARTÕES DOS DIAS === */
         .slot-card { position:relative; display:flex; flex-direction:column; overflow:hidden; border-radius:18px; background:#f8fafc; border:1px solid #e2e8f0;
@@ -363,7 +416,10 @@
                      border:1px solid #cbd5e1; background:#fff; color:#64748b; cursor:pointer; outline:none; user-select:none; -webkit-user-select:none;
                      transition: transform .15s ease, background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease; }
         .dark .slot-chip { background:#1e293b; border-color:#475569; color:#94a3b8; }
-        .slot-chip { flex-wrap: wrap; text-align: center; line-height: 1.15; }
+        /* Sempre numa única linha: ícone ao lado do nome, todos os chips com a mesma altura */
+        .slot-chip { flex-wrap: nowrap; white-space: nowrap; min-width: 0; height: 34px; line-height: 1; text-align: center; gap: 5px; padding: 6px; font-size: 10.5px; }
+        .slot-chip-ico { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; flex-shrink: 0; }
+        .slot-chip-txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
         .slot-chip:hover { border-color: var(--c); color: var(--c); transform: scale(1.05); }
         .slot-chip:active { transform: scale(.94); }
         .slot-chip:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,.35); }
@@ -379,13 +435,14 @@
         .wk-card.drag-item.dragging { cursor:grabbing; }
         .wk-card.wk-done { opacity:.65; }
         .wk-card.wk-done h4 { text-decoration: line-through; }
-        .wk-check { width:28px; height:28px; border-radius:999px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900;
+        .wk-check { width:22px; height:22px; border-radius:999px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900;
                     color:#fff; background:#2563eb; border:2px solid #2563eb; box-shadow:0 4px 10px -4px rgba(37,99,235,.7); cursor:pointer; outline:none;
                     transition: transform .15s ease, background-color .2s ease, border-color .2s ease; }
         .wk-check:hover { transform: scale(1.14); }
         .wk-check:active { transform: scale(.9); }
         .wk-check.on { background:#16a34a; border-color:#16a34a; box-shadow:0 4px 10px -4px rgba(22,163,74,.7); }
-        .wk-chev { transition: transform .25s ease; color:#94a3b8; font-size:12px; }
+        .wk-chev { transition: transform .25s ease; color:#94a3b8; font-size:10px; }
+        .wk-card .level-tag { font-size:9px; gap:3px; }
         .wk-chev.rot { transform: rotate(180deg); }
         .wk-expand { animation: wkFade .25s ease backwards; }
         @keyframes wkFade { from { opacity:0; transform: translateY(-4px); } to { opacity:1; transform:none; } }
@@ -396,7 +453,7 @@
         .wk-var.on, .dark .wk-var.on { background:#39ff14; border-color:#39ff14; color:#0f172a; }
         .wk-guide { font-size:11px; font-weight:800; color:#2563eb; display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:10px; cursor:pointer; outline:none; transition: background-color .2s ease, transform .15s ease; }
         .wk-guide:hover { background: rgba(37,99,235,.12); transform: scale(1.04); }
-        @media (prefers-reduced-motion: reduce) { .slot-enter, .slot-pop, .wk-expand { animation: none; } .slot-card, .cat-btn, .slot-chip, .wk-card { transition: none; } }
+        @media (prefers-reduced-motion: reduce) { .slot-enter, .slot-pop, .wk-expand { animation: none; } .slot-card, .cat-btn, .cat-btn::after, .cat-ico, .slot-chip, .wk-card { transition: none; } }
     </style>
 </head>
 <body class="bg-slate-300 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen font-sans transition-colors duration-300">
@@ -418,17 +475,19 @@
                     <i class="fa-solid fa-stopwatch"></i><span>Cronómetro</span>
                 </button>
 
-                <div class="h-10 flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600" role="group" aria-label="Plano">
-                    <span class="hidden md:inline text-[10px] font-black uppercase tracking-wider text-slate-400 pl-2 pr-1">Plano</span>
-                    <label class="h-8 flex items-center gap-2 px-3 rounded-lg cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
-                        <i class="fa-solid fa-cloud-arrow-up"></i><span>Importar</span>
-                        <input type="file" id="fileUpload" class="hidden" accept=".txt,.csv,.json">
-                    </label>
+                <div class="h-10 flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600" role="group" aria-label="Importar e exportar semana">
+                    <button onclick="openImportModal()" title="Importar semana" aria-label="Importar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
+                        <i class="fa-solid fa-file-import"></i><span>Importar</span>
+                    </button>
                     <span class="w-px h-5 bg-slate-300 dark:bg-slate-500"></span>
-                    <button onclick="clearDatabase()" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:text-white transition-all duration-200 active:scale-95">
-                        <i class="fa-solid fa-trash-can"></i><span>Resetar tudo</span>
+                    <button onclick="openExportModal()" title="Exportar semana" aria-label="Exportar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
+                        <i class="fa-solid fa-file-export"></i><span>Exportar</span>
                     </button>
                 </div>
+
+                <button onclick="clearDatabase()" class="h-10 flex items-center gap-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all duration-200 active:scale-95">
+                    <i class="fa-solid fa-trash-can"></i><span>Resetar tudo</span>
+                </button>
 
                 <button id="themeToggle" class="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all duration-200 hover:scale-110 shadow-md" aria-label="Alternar tema claro/escuro">
                     <i class="fa-solid fa-moon text-lg block dark:hidden"></i>
@@ -489,31 +548,43 @@
             <div id="weeklyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
         </section>
 
-        <!-- CABEÇALHO DA SECÇÃO DE EXERCÍCIOS + BOTÃO DE ADICIONAR SLOT/EXERCÍCIO -->
-        <section class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-700 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h3 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-dumbbell text-brand-push"></i> Catálogo de Exercícios
-                </h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Níveis básico, intermediário, avançado e elite. Inclui argolas. Crie também os seus próprios exercícios.</p>
+        <!-- CATÁLOGO DE EXERCÍCIOS: título + pesquisa + adicionar + abas de categoria (tudo num só painel) -->
+        <section class="bg-white dark:bg-slate-800 px-5 pt-4 pb-2 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-700 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <h3 class="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-dumbbell text-brand-push"></i> Catálogo de Exercícios
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Do nível básico ao elite, com argolas. Crie também os seus exercícios.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto lg:min-w-[30rem] lg:max-w-xl">
+                    <div class="relative flex-1 min-w-0">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+                        <input type="text" id="searchBar" onkeyup="searchExercise()" placeholder="Pesquisar exercício, nível ou argolas..." class="w-full pl-10 pr-3 py-2.5 bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-push shadow-inner transition">
+                    </div>
+                    <button type="button" onclick="openNewExerciseModal()" class="bg-brand-neon hover:bg-[#2fe00f] text-slate-900 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 active:scale-95 shrink-0" style="background-color: #39ff14;">
+                        <i class="fa-solid fa-plus-circle text-base"></i> Adicionar Exercício
+                    </button>
+                </div>
             </div>
-            <button onclick="openNewExerciseModal()" class="bg-brand-neon hover:bg-[#2fe00f] text-slate-900 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition shadow-md flex items-center gap-2 active:scale-95 shrink-0" style="background-color: #39ff14;">
-                <i class="fa-solid fa-plus-circle text-base"></i> Adicionar Exercício / Slot
-            </button>
-        </section>
-
-        <!-- FILTROS E BARRA DE PESQUISA -->
-        <section class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-700 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div id="categoryTabs" role="tablist" aria-label="Filtrar por categoria" class="flex flex-wrap gap-2 w-full md:w-auto">
-                <button type="button" role="tab" id="btnFilterALL" data-cat="ALL" aria-selected="true" onclick="filterCategory('ALL')" class="cat-btn active px-5 py-2.5 rounded-xl text-sm font-bold" style="--cat:#4f46e5">Todos</button>
-                <button type="button" role="tab" id="btnFilterPUSH" data-cat="PUSH" aria-selected="false" onclick="filterCategory('PUSH')" class="cat-btn px-5 py-2.5 rounded-xl text-sm font-bold" style="--cat:#2563eb">Empurrar (PUSH)</button>
-                <button type="button" role="tab" id="btnFilterPULL" data-cat="PULL" aria-selected="false" onclick="filterCategory('PULL')" class="cat-btn px-5 py-2.5 rounded-xl text-sm font-bold" style="--cat:#8b5cf6">Puxar (PULL)</button>
-                <button type="button" role="tab" id="btnFilterLEGS" data-cat="LEGS" aria-selected="false" onclick="filterCategory('LEGS')" class="cat-btn px-5 py-2.5 rounded-xl text-sm font-bold" style="--cat:#f97316">Pernas</button>
-                <button type="button" role="tab" id="btnFilterCORE" data-cat="CORE" aria-selected="false" onclick="filterCategory('CORE')" class="cat-btn px-5 py-2.5 rounded-xl text-sm font-bold" style="--cat:#10b981">Core</button>
+            <div class="mt-2 pt-1 border-t border-slate-200 dark:border-slate-700/70">
+            <div id="categoryTabs" role="tablist" aria-label="Filtrar por categoria" class="flex flex-wrap gap-4 w-full">
+                <button type="button" role="tab" id="btnFilterALL" data-cat="ALL" aria-selected="true" onclick="filterCategory('ALL')" class="cat-btn active" style="--cat:#4f46e5">
+                    <span class="cat-ico"><i class="fa-solid fa-layer-group"></i></span><span class="cat-label">Todos</span><span class="cat-count" id="tabCountALL">0</span>
+                </button>
+                <button type="button" role="tab" id="btnFilterPUSH" data-cat="PUSH" aria-selected="false" onclick="filterCategory('PUSH')" class="cat-btn" style="--cat:#2563eb">
+                    <span class="cat-ico"><span data-cat-icon="PUSH"></span></span><span class="cat-label">Empurrar<small>PUSH</small></span><span class="cat-count" id="tabCountPUSH">0</span>
+                </button>
+                <button type="button" role="tab" id="btnFilterPULL" data-cat="PULL" aria-selected="false" onclick="filterCategory('PULL')" class="cat-btn" style="--cat:#8b5cf6">
+                    <span class="cat-ico"><span data-cat-icon="PULL"></span></span><span class="cat-label">Puxar<small>PULL</small></span><span class="cat-count" id="tabCountPULL">0</span>
+                </button>
+                <button type="button" role="tab" id="btnFilterLEGS" data-cat="LEGS" aria-selected="false" onclick="filterCategory('LEGS')" class="cat-btn" style="--cat:#f97316">
+                    <span class="cat-ico"><span data-cat-icon="LEGS"></span></span><span class="cat-label">Pernas</span><span class="cat-count" id="tabCountLEGS">0</span>
+                </button>
+                <button type="button" role="tab" id="btnFilterCORE" data-cat="CORE" aria-selected="false" onclick="filterCategory('CORE')" class="cat-btn" style="--cat:#10b981">
+                    <span class="cat-ico"><span data-cat-icon="CORE"></span></span><span class="cat-label">Core</span><span class="cat-count" id="tabCountCORE">0</span>
+                </button>
             </div>
-            <div class="relative w-full md:max-w-md">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-                <input type="text" id="searchBar" onkeyup="searchExercise()" placeholder="Pesquisar exercício, nível ou argolas..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-push shadow-inner transition">
             </div>
         </section>
 
@@ -548,7 +619,7 @@
                 <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div id="viewWorkoutProgressBar" class="h-full rounded-full transition-all duration-500" style="width:0%;background:linear-gradient(90deg,#2563eb,#39ff14)"></div></div>
             </div>
 
-            <div id="viewWorkoutList" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2 my-2"></div>
+            <div id="viewWorkoutList" class="flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-2 my-2"></div>
 
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end shrink-0">
                 <button onclick="closeViewWorkout()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition">Fechar</button>
@@ -578,6 +649,77 @@
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500"><i class="fa-solid fa-hand-pointer mr-1"></i>Clique num dia para ir até ele, ou em "Abrir" para iniciar o treino.</span>
                 <button onclick="closeFullWeek()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition active:scale-95">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL EXPORTAR SEMANA ============ -->
+    <div id="exportModal" onclick="if(event.target===this)closeExportModal()" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 max-w-lg w-full rounded-3xl shadow-2xl border border-slate-300 dark:border-slate-700 p-6 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-start gap-4 mb-4 pb-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
+                <div class="min-w-0">
+                    <h3 class="text-xl font-black text-slate-800 dark:text-white leading-tight"><i class="fa-solid fa-file-export text-brand-push mr-2"></i>Exportar semana</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Gere um arquivo ou um código para outra pessoa importar a sua semana de treino.</p>
+                </div>
+                <button onclick="closeExportModal()" aria-label="Fechar" class="text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-slate-700 w-9 h-9 flex items-center justify-center rounded-full shadow-sm shrink-0 transition active:scale-95"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar pr-1">
+                <div id="exportSummary" class="flex flex-wrap gap-2 mb-4"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <button onclick="downloadWeekFile()" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-push hover:bg-blue-600 text-white text-sm font-black shadow-lg shadow-blue-500/30 transition-all duration-200 hover:scale-[1.02] active:scale-95">
+                        <i class="fa-solid fa-download"></i><span>Baixar arquivo</span>
+                    </button>
+                    <button id="exportCopyBtn" onclick="copyWeekCode()" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95">
+                        <i class="fa-regular fa-copy"></i><span>Copiar código</span>
+                    </button>
+                </div>
+
+                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Código da semana</label>
+                <textarea id="exportCode" readonly rows="4" onclick="this.select()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-[11px] font-mono text-slate-600 dark:text-slate-300 resize-none break-all"></textarea>
+                <p class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-2"><i class="fa-solid fa-circle-info mr-1"></i>As fotos dos exercícios personalizados vão apenas no arquivo, não no código.</p>
+            </div>
+
+            <div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end shrink-0">
+                <button onclick="closeExportModal()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition active:scale-95">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL IMPORTAR SEMANA ============ -->
+    <div id="importModal" onclick="if(event.target===this)closeImportModal()" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 max-w-lg w-full rounded-3xl shadow-2xl border border-slate-300 dark:border-slate-700 p-6 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-start gap-4 mb-4 pb-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
+                <div class="min-w-0">
+                    <h3 class="text-xl font-black text-slate-800 dark:text-white leading-tight"><i class="fa-solid fa-file-import text-brand-push mr-2"></i>Importar semana</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Escolha um arquivo exportado ou cole o código que você recebeu.</p>
+                </div>
+                <button onclick="closeImportModal()" aria-label="Fechar" class="text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-slate-700 w-9 h-9 flex items-center justify-center rounded-full shadow-sm shrink-0 transition active:scale-95"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar pr-1">
+                <label class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-brand-push hover:text-brand-push text-slate-600 dark:text-slate-300 text-sm font-black cursor-pointer transition-all duration-200 active:scale-[0.99]">
+                    <i class="fa-solid fa-folder-open"></i><span id="importFileLabel">Escolher arquivo (.json)</span>
+                    <input type="file" id="importFileInput" class="hidden" accept=".json,.txt,application/json,text/plain">
+                </label>
+
+                <div class="flex items-center gap-3 my-3">
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></span>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">ou</span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></span>
+                </div>
+
+                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Colar código</label>
+                <textarea id="importCode" rows="3" oninput="onImportCodeInput()" placeholder="CALI1:..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 focus:border-brand-push outline-none rounded-xl px-3 py-2 text-[11px] font-mono text-slate-700 dark:text-slate-200 resize-none break-all"></textarea>
+
+                <div id="importError" class="hidden mt-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs font-bold text-red-600 dark:text-red-300"></div>
+                <div id="importPreview" class="hidden mt-3"></div>
+            </div>
+
+            <div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap justify-end gap-3 shrink-0">
+                <button id="importCancelBtn" onclick="closeImportModal()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition active:scale-95">Cancelar</button>
+                <button id="importConfirmBtn" onclick="applyImport()" disabled class="px-6 py-2.5 bg-brand-push hover:bg-blue-600 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none">Importar semana</button>
             </div>
         </div>
     </div>
@@ -693,6 +835,28 @@
                         <option value="advanced">Avançado</option>
                         <option value="elite">Elite</option>
                     </select>
+                </div>
+                <div id="guideSuggestBox" class="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 p-4 space-y-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-slate-900" style="background:#39ff14"><i class="fa-solid fa-wand-magic-sparkles text-sm"></i></div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reconhecimento automático</p>
+                            <p id="guideDetectText" class="text-sm font-bold text-slate-800 dark:text-white leading-snug">Escreve o nome do exercício para eu tentar identificá-lo.</p>
+                            <p id="guideDetectMeta" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug"></p>
+                        </div>
+                    </div>
+                    <div id="guideApplyRow" class="hidden">
+                        <button type="button" onclick="applyDetectedMeta()" class="w-full text-xs font-bold bg-brand-push hover:bg-blue-600 text-white py-2 rounded-lg transition"><i class="fa-solid fa-check mr-1"></i>Usar categoria e nível sugeridos</button>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">Dicas de Execução <span class="normal-case font-semibold tracking-normal text-slate-400">(uma por linha)</span></label>
+                        <textarea id="modalInputTips" rows="4" placeholder="Ex: Mantém o corpo alinhado da cabeça aos calcanhares" class="w-full bg-white dark:bg-slate-900 p-3 rounded-xl text-slate-800 dark:text-white font-semibold text-xs leading-relaxed border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-push resize-y"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">Erros Comuns <span class="normal-case font-semibold tracking-normal text-slate-400">(um por linha)</span></label>
+                        <textarea id="modalInputMistakes" rows="3" placeholder="Ex: Deixar o quadril cair" class="w-full bg-white dark:bg-slate-900 p-3 rounded-xl text-slate-800 dark:text-white font-semibold text-xs leading-relaxed border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-push resize-y"></textarea>
+                    </div>
+                    <button type="button" onclick="regenerateGuideSuggestion()" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-brand-push transition"><i class="fa-solid fa-rotate mr-1"></i>Gerar sugestão novamente</button>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">Imagem Personalizada</label>
@@ -959,6 +1123,256 @@
             CORE: ["Prender a respiração", "Compensação com a lombar", "Perder a tensão abdominal"]
         };
 
+        // ============ GUIAS POR EXERCÍCIO: DICAS DE EXECUÇÃO + ERROS COMUNS ============
+        // Cada exercício tem o seu próprio guia (formato "dicas ## erros", itens separados por "|").
+        // As edições feitas na janela do exercício ficam guardadas no próprio exercício (ex.tips / ex.mistakes).
+        const _g = s => { const p = s.split('##'); const sp = x => (x || '').split('|').map(v => v.trim()).filter(Boolean); return { tips: sp(p[0]), mistakes: sp(p[1]) }; };
+        const CROSS_TIPS = ['Aquece muito bem ombros, cotovelos e tendão do bíceps antes de qualquer tentativa', 'Braços totalmente estendidos: empurra as argolas para baixo e para fora', 'Corpo rígido: glúteos e abdómen contraídos, ombros longe das orelhas'];
+        const CROSS_MISTAKES = ['Dobrar os cotovelos para compensar a falta de força', 'Progredir depressa demais (risco de tendinopatia no cotovelo e no ombro)', 'Deixar o quadril cair ou os ombros subirem'];
+        const _x = s => { const g = _g(s); return { tips: [...g.tips, ...CROSS_TIPS], mistakes: [...g.mistakes, ...CROSS_MISTAKES] }; };
+
+        const exerciseGuides = {
+            // ---- EMPURRAR (PUSH) ----
+            'PUSH 01': _g('Mãos à largura dos ombros, na altura do peito|Corpo em linha reta dos calcanhares à cabeça|Cotovelos a cerca de 45° e peito a aproximar-se da superfície|Quanto mais baixa a superfície (banco, mesa), mais difícil##Deixar o quadril cair ou empinar|Cotovelos abertos a 90°|Projetar a cabeça à frente do tronco'),
+            'PUSH 02': _g('Linha reta dos joelhos à cabeça, glúteos contraídos|Mãos sob os ombros, dedos a apontar para a frente|Desce com controlo até o peito quase tocar o chão|Expira ao empurrar##Sentar o quadril para trás|Descer só até meio|Lombar arqueada com quadril caído'),
+            'PUSH 03': _g('Prancha rígida: glúteos e abdómen contraídos|Cotovelos a 45° do tronco, nunca em T|Desce até o peito quase tocar o chão e estende totalmente no topo|Empurra o chão para manter as escápulas ativas##Quadril caído ou empinado|Amplitude incompleta|Cabeça a cair ou queixo projetado'),
+            'PUSH 04': _g('Mãos no banco, ombros afastados das orelhas|Costas rente ao banco, cotovelos a apontar para trás|Desce até cerca de 90° de flexão do cotovelo|Sobe sem encolher os ombros##Descer demasiado (sobrecarga no ombro)|Cotovelos abertos para os lados|Impulsionar com as pernas'),
+            'PUSH 05': _g('Mãos juntas sob o peito, polegares e indicadores a formar um diamante|Cotovelos rente ao corpo durante toda a repetição|Peito desce até quase tocar as mãos, corpo em prancha|Se os punhos incomodarem, roda levemente as mãos para fora##Cotovelos a abrir|Quadril caído|Descer só parcialmente'),
+            'PUSH 06': _g('Pés apoiados numa superfície estável, corpo em linha reta|Quanto mais alto o apoio, maior a carga nos ombros|Mãos ligeiramente mais largas que os ombros|Desce de forma controlada até o peito ficar perto do chão##Dobrar o quadril em pike sem querer|Pés instáveis|Descer com a cabeça em vez do peito'),
+            'PUSH 07': _g('Argolas fixas e estáveis, mãos à largura dos ombros|Prancha rígida, escápulas a empurrar no topo|Faz turn-out (palmas viradas para fora) ao estender|Desce até as argolas ficarem junto ao peito##Argolas a abrir ou a balançar|Perder a rigidez do corpo|Cotovelos em T'),
+            'PUSH 08': _g('Quadril alto formando um V invertido, pés perto das mãos|Desce a cabeça para a frente das mãos (trajeto em triângulo)|Cotovelos a cerca de 45°|Ombros a empurrar o chão no topo##Pernas dobradas|Pés demasiado longe (vira uma flexão comum)|Amplitude curta'),
+            'PUSH 09': _g('Ombros deprimidos e afastados das orelhas|Tronco ligeiramente inclinado à frente|Desce até os ombros ficarem ao nível dos cotovelos|Cotovelos junto ao corpo, extensão completa no topo##Descer demasiado fundo|Encolher os ombros|Balançar as pernas para ajudar'),
+            'PUSH 10': _g('Começa em suporte estável com turn-out|Mantém as argolas junto ao corpo na descida|Desce controlado até os ombros ficarem ao nível dos cotovelos|Empurra de volta ao suporte com os braços totalmente estendidos##Argolas a abrir para os lados|Perder o suporte (ombros encolhidos)|Descer sem controlo (risco no ombro e no peitoral)'),
+            'PUSH 11': _g('Domina primeiro os Ring Dips e o suporte estável|Aquece muito bem ombros e peitoral|Desce lento, com o tronco inclinado à frente e o corpo rígido|Pára antes de perderes o controlo das argolas##Descer sem controlo (risco de lesão no peitoral)|Perder o turn-out|Progredir sem base sólida de ring dips'),
+            'PUSH 12': _g('Começa em posição de flexão com cotovelos ligeiramente fletidos|Abre os braços devagar, sem perder o alinhamento do corpo|Mantém o ângulo do cotovelo fixo durante o movimento|Usa argolas mais baixas ou apoio nos pés para progredir##Abrir demais (risco no peitoral e no ombro)|Dobrar os cotovelos e transformar em flexão|Perder a prancha rígida'),
+            'PUSH 13': _g('Mãos largas: um braço faz a força enquanto o outro fica estendido|Desloca o tronco para o lado que trabalha|Corpo em prancha, quadril sem rodar|Alterna os lados com a mesma amplitude##Braço estendido a empurrar|Mãos demasiado juntas|Quadril a rodar'),
+            'PUSH 14': _g('Mãos junto à cintura, dedos a apontar para trás ou para os lados|Inclina os ombros bem à frente das mãos|Escápulas protraídas e costas ligeiramente arredondadas|Aquece bem os punhos##Pouca inclinação à frente (fica uma flexão comum)|Arquear a lombar|Cotovelos abertos'),
+            'PUSH 15': _g('Mãos a cerca de 15-20 cm da parede, corpo em linha reta|Glúteos e abdómen contraídos para não arquear|Desce a cabeça em trajeto de triângulo até tocar o chão|Empurra com os ombros até a extensão completa##Lombar muito arqueada (banana)|Cotovelos abertos|Usar impulso das pernas para subir'),
+            'PUSH 16': _g('Tem uma parada de mãos livre sólida (30 s ou mais) antes de começar|Os dedos controlam o equilíbrio|Corpo em linha reta, olhar entre as mãos|Desce de forma controlada em triângulo##Arquear a lombar (banana)|Perder o equilíbrio sem plano de saída|Não estender totalmente os ombros no topo'),
+            'PUSH 17': _g('Mãos para trás, braços retos, ombros à frente das mãos|Protração máxima das escápulas, costas ligeiramente arredondadas|Joelhos ao peito e quadril ao nível dos ombros na tuck|Poucos segundos, mas com qualidade##Cotovelos dobrados|Quadril demasiado baixo|Pouca inclinação à frente'),
+            'PUSH 18': _g('Tem uma straddle planche sólida (8-10 s) antes de tentar|Pernas abertas e corpo horizontal|Cotovelos junto ao corpo na descida|Mantém a protração na subida##Quadril a cair|Cotovelos abertos|Perder a protração'),
+            'PUSH 19': _g('Corpo em linha reta e horizontal, pernas juntas|Protração das escápulas e glúteos contraídos (pélvis em retroversão)|Braços retos, ombros bem à frente das mãos|Olhar ligeiramente à frente do chão##Quadril alto ou caído|Cotovelos fletidos|Lombar arqueada'),
+            'PUSH 20': _g('Tem uma planche hold sólida antes de somar repetições|Cotovelos junto ao corpo|Desce devagar, mantendo o corpo horizontal|Poucas repetições e descanso longo##Quadril a subir|Cotovelos abertos|Perder a linha do corpo'),
+            'PUSH 21': _x('Progride primeiro com elástico ou assistência##Tentar a posição completa sem pré-requisitos'),
+            'PUSH 22': _x('Domina a Cruz de Ferro antes de tentar a Maltese##Fazer volume excessivo'),
+            'PUSH 23': _x('Ancora o elástico acima, de forma segura, e passa a elásticos mais finos aos poucos##Usar o ressalto do elástico em vez de força'),
+            'PUSH 24': _x('Joelhos ao peito e quadril ao nível dos ombros##Quadril a cair'),
+            'PUSH 25': _x('Desce devagar (3-8 s) do suporte para a cruz##Cair sem controlo na descida'),
+            'PUSH 26': _x('Parte da posição pendurada e puxa com os braços o mais retos possível##Balançar ou dobrar os cotovelos para chegar à cruz'),
+            'PUSH 27': _x('Ancora o elástico e reduz a assistência aos poucos##Depender sempre do mesmo elástico'),
+            'PUSH 28': _x('Só avança com a cruz e a maltese bem sólidas##Saltar etapas da progressão'),
+            'PUSH 29': _g('Braços retos, ombros bem à frente das mãos|Costas ligeiramente arredondadas e joelhos afastados do peito|Quadril ao nível dos ombros ou acima|Protração máxima das escápulas##Cotovelos dobrados|Quadril baixo|Cabeça a cair'),
+            'PUSH 30': _g('Dobra os joelhos a cerca de 90° e mantém o quadril alto|Braços retos e protração das escápulas|Glúteos contraídos, sem arquear a lombar|Só avança quando a advanced tuck dura 12-15 s##Quadril a cair|Lombar arqueada|Cotovelos dobrados'),
+            'PUSH 31': _x('Controla a saída da cruz, sem soltar de repente##Soltar a posição de repente'),
+            'PUSH 32': _x('Reduz a assistência (straps/apoio) de forma gradual##Depender sempre da assistência'),
+            'PUSH 33': _x('Usa os blocos de apoio para ganhar tempo antes de os reduzir##Apoiar-se demais nos blocos'),
+            'PUSH 34': _x('Avança da half cross para a full cross em pequenos passos##Passar à posição completa sem estar pronto'),
+            'PUSH 35': _x('Poucas séries e descanso longo: os tendões demoram a adaptar##Treinar a cruz todos os dias'),
+            'PUSH 36': _g('Transfere o peso para uma mão aos poucos|Ombro do braço de apoio sobre a mão, dedos a controlar o equilíbrio|Pernas ligeiramente afastadas ajudam no início|Treina a saída segura (bail)##Quadril a ceder para um lado|Ombro encolhido|Arquear a lombar'),
+            'PUSH 37': _g('Pernas bem afastadas (straddle) para ajudar no equilíbrio|Mantém o ombro do braço de apoio sobre a mão|Dedos a controlar o equilíbrio, olhar na mão de apoio|Treina a saída segura##Perder a linha do corpo|Ombro encolhido|Saltar etapas'),
+            'PUSH 38': _g('Passos curtos e controlados, pés bem juntos|Corpo em linha reta, ombros abertos|Olhar entre as mãos|Treina o padrão junto à parede primeiro##Passos demasiado grandes|Lombar arqueada|Perder o equilíbrio por pressa'),
+            'PUSH 39': _g('Aquece muito bem dedos, punhos e antebraços|Reduz os dedos de apoio de forma gradual (5, 3, 2 e só depois 1)|Mantém o corpo alinhado e os ombros abertos|Séries curtas e descanso longo##Saltar etapas (risco nos tendões dos dedos)|Falta de aquecimento|Volume excessivo'),
+
+            // ---- PUXAR (PULL) ----
+            'PULL 01': _g('Corpo rígido como uma prancha invertida|Puxa o peito à barra, escápulas retraídas|Cotovelos a cerca de 45°|Quanto mais horizontal o corpo, mais difícil##Quadril a cair|Puxar só com os braços|Amplitude incompleta'),
+            'PULL 02': _g('Argolas fixas e corpo em linha reta|Puxa as argolas ao peito/costelas, com turn-out no topo|Junta as escápulas no topo e desce devagar|Pés mais à frente = mais difícil##Quadril a cair|Argolas a abrir|Ombros encolhidos'),
+            'PULL 03': _g('Aquece ombros e peitoral antes|Entra devagar, passando as pernas entre os braços|Controla a fase de extensão dos ombros, sem soltar|Volta com a mesma lentidão##Soltar a posição de repente|Forçar além da mobilidade dos ombros|Perder a pegada'),
+            'PULL 04': _g('Ancora o elástico na barra e apoia o joelho ou o pé|Ativa as escápulas antes de puxar|Queixo passa a barra, descida lenta|Troca por elástico mais fino aos poucos##Usar o ressalto do elástico|Descer sem controlo|Meia amplitude'),
+            'PULL 05': _g('Pegada supinada à largura dos ombros|Cotovelos para baixo e junto ao corpo|Peito sobe em direção à barra|Descida lenta até os braços estenderem##Balançar o corpo|Projetar o queixo à frente|Meia amplitude'),
+            'PULL 06': _g('Pegada pronada ligeiramente mais larga que os ombros|Retrai e deprime as escápulas antes de puxar|Peito à barra, cotovelos a apontar para o chão|Glúteos e abdómen contraídos, pernas ligeiramente à frente##Balançar ou usar kipping|Não estender totalmente os braços em baixo|Encolher os ombros'),
+            'PULL 07': _g('Pegada larga: puxa o corpo para um dos lados|O braço oposto fica estendido|Alterna os lados com a mesma amplitude|Mantém o corpo reto##Braço estendido a ajudar demais|Pegada demasiado larga|Balançar'),
+            'PULL 08': _g('As argolas aumentam a instabilidade: mantém-nas à mesma altura|Puxa para um lado com o braço oposto estendido|Controla a rotação das argolas|Domina primeiro o archer na barra##Argolas a abrir sem controlo|Braço estendido a ajudar demais|Ombros encolhidos'),
+            'PULL 09': _g('Inclina o corpo para trás e puxa o peito ou a cintura à barra|Cotovelos para trás e para baixo|Pés à frente e glúteos firmes|Só depois de pull-ups limpos##Não inclinar o corpo|Cotovelos à frente|Balançar'),
+            'PULL 10': _g('Usa pegada falsa (false grip) ou uma transição forte|Puxa de forma explosiva em direção ao abdómen|Passa os cotovelos por cima da barra rapidamente|Termina em suporte, com os braços estendidos##Kipping excessivo|Transição lenta (fica preso na barra)|Pegada demasiado larga'),
+            'PULL 11': _g('Usa false grip e mantém as argolas junto ao corpo|Puxa para o peito/cintura de forma explosiva|Transição rápida, com os cotovelos para trás|Termina em suporte com turn-out##Argolas a abrir|Treinar sem false grip|Descer sem controlo'),
+            'PULL 12': _g('Escápulas deprimidas e retraídas, braços retos|Joelhos ao peito e quadril ao nível dos ombros|Corpo horizontal, olhar à frente|Aumenta o tempo antes de abrir o tuck##Cotovelos dobrados|Quadril a cair|Lombar arqueada'),
+            'PULL 13': _g('Parte de uma front lever (adv. tuck ou full) bem controlada|Puxa mantendo o corpo horizontal|Desce devagar até os braços ficarem retos|Poucas repetições, mas de qualidade##Quadril a cair ao puxar|Balançar|Perder a tensão do core'),
+            'PULL 14': _g('Corpo reto e horizontal, braços retos|Escápulas deprimidas e glúteos contraídos|Abdómen firme, olhar à frente|Respira de forma curta e controlada##Quadril a cair|Cotovelos dobrados|Lombar arqueada'),
+            'PULL 15': _g('Entra devagar (via skin the cat) com os ombros aquecidos|Corpo reto e glúteos contraídos|Braços estendidos, sem forçar a extensão dos ombros|Sai com controlo##Entrar sem mobilidade nos ombros|Quadril a cair|Cotovelos dobrados'),
+            'PULL 16': _g('Tem muscle-up e levers sólidos antes de tentar|Movimento controlado, sem balanço|Escápulas ativas e pegada segura|Aquece bem ombros e cotovelos##Saltar etapas|Perder o controlo a meio do movimento|Falta de aquecimento'),
+            'PULL 17': _g('Constrói a força com assistência (toalha, elástico ou mão auxiliar)|Escápula do braço de trabalho deprimida|Negativas lentas ajudam muito|Corpo sem rodar##Saltar etapas (risco no cotovelo)|Rodar o tronco|Balançar'),
+            'PULL 18': _g('Pré-requisitos: planche e levers fortes|Braços totalmente estendidos, corpo reto|Aquecimento extenso de ombros e cotovelos|Poucas séries com descanso longo##Saltar etapas (risco nos tendões)|Cotovelos dobrados|Falta de aquecimento'),
+            'PULL 19': _g('Cotovelos junto ao abdómen, apoiado nas argolas|Inclina o corpo para a frente e levanta os pés|Mantém o corpo reto|Olha para o chão##Cotovelos abertos|Quadril a cair|Argolas a rodar'),
+            'PULL 20': _g('Pré-requisitos: ring muscle-up e suporte sólidos|Controla cada fase do movimento|Aquece bem ombros e cotovelos|Poucas repetições##Saltar etapas|Perder o controlo|Falta de aquecimento'),
+
+            // ---- PERNAS (LEGS) ----
+            'LEGS 01': _g('Pés à largura dos ombros, pontas ligeiramente para fora|Joelhos acompanham a direção das pontas dos pés|Desce até as coxas ficarem paralelas ao chão ou mais|Peito erguido, peso no meio do pé##Joelhos a colapsar para dentro|Calcanhares a sair do chão|Tronco muito inclinado'),
+            'LEGS 02': _g('Pés bem afastados, pontas a cerca de 45°|Joelhos seguem a direção das pontas|Tronco ereto|Contrai os glúteos ao subir##Joelhos a colapsar|Pés demasiado paralelos|Inclinar o tronco'),
+            'LEGS 03': _g('Sobe o mais alto possível na ponta dos pés|Pausa de 1 s no topo|Desce devagar até alongar bem a panturrilha|Uma perna só para progredir##Meia amplitude|Balançar|Rolar o tornozelo para fora'),
+            'LEGS 04': _g('Passo longo, joelho da frente alinhado com o pé|Tronco ereto, joelho de trás quase toca o chão|Empurra com o calcanhar da perna da frente|Mantém o quadril nivelado##Joelho a colapsar para dentro|Passo demasiado curto|Tronco inclinado'),
+            'LEGS 05': _g('Pé de trás apoiado num banco, tronco ligeiramente inclinado|Joelho da frente alinhado com o pé|Desce em controlo até a coxa ficar paralela|Peso no calcanhar e meio do pé da frente##Pé da frente demasiado perto do banco|Joelho a colapsar|Tronco muito inclinado'),
+            'LEGS 06': _g('Passo lateral largo, perna de trabalho com o calcanhar no chão|Perna oposta esticada, com a ponta do pé para cima|Peito erguido|Desce até o limite confortável de mobilidade##Calcanhar a levantar|Joelho a colapsar|Forçar além da mobilidade'),
+            'LEGS 07': _g('Caixote estável e de altura adequada|Balança os braços e salta com explosão|Aterra suavemente, joelhos fletidos|Desce a pé (step down) em vez de saltar##Aterrar com os joelhos rígidos|Caixote instável ou alto demais|Descer saltando quando estás cansado'),
+            'LEGS 08': _g('Apoia-te numa parede ou barra para equilíbrio|Inclina o corpo para trás e leva os joelhos à frente|Mantém quadril, tronco e joelhos numa linha|Desce devagar e aquece bem os joelhos##Dobrar o quadril em vez de inclinar o corpo todo|Descer sem controlo|Falta de aquecimento nos joelhos'),
+            'LEGS 09': _g('Segura numa barra ou argola para te ajudar|Perna livre estendida à frente|Joelho acompanha a direção do pé|Reduz a ajuda das mãos aos poucos##Apoiar-se demais nas mãos|Calcanhar a levantar|Joelho a colapsar'),
+            'LEGS 10': _g('Calcanhar sempre no chão|Braços à frente para equilíbrio|Perna livre estendida e elevada|Desce com controlo e sobe sem impulso##Calcanhar a levantar|Perna livre a cair no chão|Cair no fundo da descida'),
+            'LEGS 11': _g('Aquece tornozelos e quadril|Segura o pé de trás e desce com controlo|Calcanhar da perna da frente no chão|Joelho de trás toca suavemente o chão##Calcanhar a levantar|Joelho a colapsar|Tronco muito inclinado'),
+            'LEGS 12': _g('Joelhos acolchoados e pés bem presos|Corpo reto dos joelhos à cabeça|Desce o mais lento possível, mãos a amortecer|Sobe com ajuda das mãos, se for preciso##Dobrar no quadril|Cair sem controlo|Pés mal fixos'),
+
+            // ---- CORE ----
+            'CORE 01': _g('Cotovelos sob os ombros, corpo em linha reta|Glúteos e abdómen contraídos|Respira de forma ritmada|Olhar para o chão, pescoço neutro##Quadril caído ou empinado|Prender a respiração|Olhar para a frente (pescoço estendido)'),
+            'CORE 02': _g('Braços retos, argolas junto ao corpo|Turn-out (palmas viradas para fora)|Ombros deprimidos, longe das orelhas|Pernas juntas e core firme##Argolas a abrir|Ombros encolhidos|Cotovelos dobrados'),
+            'CORE 03': _g('Pendura-te com os ombros ativos|Sobe os joelhos ao peito enrolando a pélvis|Sem balançar|Desce devagar##Balançar|Levantar só com os flexores da anca|Descer sem controlo'),
+            'CORE 04': _g('Lombar colada ao chão|Ombros e pernas elevados, braços para trás ou ao lado|Quanto mais baixas as pernas, mais difícil|Respira de forma curta e constante##Lombar a arquear|Tensionar o pescoço|Pernas demasiado altas (fica fácil)'),
+            'CORE 05': _g('Ativa os ombros antes de subir|Enrola a pélvis e leva os pés à barra|Pernas esticadas e sem balanço|Desce devagar##Balançar demais|Dobrar os braços|Dobrar os joelhos'),
+            'CORE 06': _g('Posição hollow, pélvis enrolada|Estende só até onde controlas sem arquear|Puxa de volta com o abdómen|Respira ao longo do movimento##Arquear a lombar|Quadril a cair|Ir longe demais cedo'),
+            'CORE 07': _g('Braços retos e ombros deprimidos|Pernas esticadas, pontas dos pés esticadas|Quadril ligeiramente à frente das mãos|Mãos ao lado do quadril##Joelhos dobrados|Ombros encolhidos|Cair para trás'),
+            'CORE 08': _g('Ombros à frente e braços retos|Pernas esticadas acima da horizontal|Contrai os quadríceps e o abdómen|Trabalha a mobilidade dos isquiotibiais##Joelhos dobrados|Perder os braços retos|Lombar a arredondar'),
+            'CORE 09': _g('Transição lenta e controlada: L-sit, pike e handstand|Ombros à frente e braços retos|Quadril sobe sobre os ombros|Treina cada fase em separado primeiro##Usar impulso excessivo|Perder os braços retos|Perder o equilíbrio na parte final'),
+            'CORE 10': _g('Ombros apoiados no banco, mãos a segurar atrás da cabeça|Corpo reto, apoiado só nos ombros|Começa pelas negativas lentas|Lombar neutra##Dobrar no quadril|Cair sem controlo|Sobrecarregar o pescoço'),
+            'CORE 11': _g('Mão de cima empurra, mão de baixo puxa|Corpo reto na horizontal e core lateral contraído|Começa pela tuck flag|Pegada firme num poste##Quadril a cair|Braços dobrados|Pegada insegura'),
+            'CORE 12': _g('Argolas baixas e posição hollow|Rola devagar, sem arquear a lombar|Braços estendidos|Mantém as argolas juntas e estáveis##Arquear a lombar|Argolas a abrir|Ir longe demais'),
+            'CORE 13': _g('Braços retos e ombros à frente|Pernas esticadas e pressão forte nas mãos|Pré-requisito: L-sit e V-sit sólidos|Core e quadril ativos##Joelhos dobrados|Ombros encolhidos|Cotovelos dobrados')
+        };
+
+        // ============ RECONHECIMENTO DO EXERCÍCIO (para exercícios criados pelo utilizador) ============
+        function normTxt(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-_\/]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+        function synTxt(s) {
+            return s.replace(/push ?ups?/g, 'flexao').replace(/flexoes/g, 'flexao').replace(/pull ?ups?/g, 'barra fixa').replace(/chin ?ups?/g, 'barra supinada')
+                .replace(/squats?/g, 'agachamento').replace(/lunges?/g, 'afundo').replace(/planks?/g, 'prancha').replace(/\brows?\b/g, 'remada')
+                .replace(/\bdips?\b/g, 'mergulho').replace(/\brings?\b/g, 'argolas').replace(/\bbandas?\b|\bbands?\b|elasticos/g, 'elastico')
+                .replace(/\bl sit\b/g, 'lsit').replace(/\bv sit\b/g, 'vsit').replace(/muscle ?ups?/g, 'muscleup');
+        }
+        const GUIDE_STOP = new Set(['de', 'da', 'do', 'das', 'dos', 'com', 'na', 'no', 'nas', 'nos', 'em', 'a', 'o', 'e', 'ao', 'para', 'por', 'um', 'uma', 'the', 'of', 'to']);
+        function guideTokens(s) { return new Set(synTxt(normTxt(s)).replace(/[()]/g, ' ').split(' ').filter(w => w && !GUIDE_STOP.has(w))); }
+        function guideNameVariants(name) {
+            const raw = String(name || '');
+            const main = raw.replace(/\(.*?\)/g, ' ');
+            const alias = (raw.match(/\((.*?)\)/g) || []).map(x => x.slice(1, -1)).join(' ');
+            return [raw, main, alias].filter(x => x.trim());
+        }
+        function guideDice(a, b) { if (!a.size || !b.size) return 0; let n = 0; a.forEach(x => { if (b.has(x)) n++; }); return 2 * n / (a.size + b.size); }
+
+        // Padrões de movimento (a ordem importa: do mais específico para o mais genérico)
+        const guidePatterns = [
+            { re: /cruz de ferro|iron cross|maltese|\bcross\b|von sychocky|victorian/, label: 'Variação da Cruz / Maltese (argolas)', cat: 'PUSH', lvl: 'elite', tips: CROSS_TIPS, mistakes: CROSS_MISTAKES },
+            { re: /planche/, label: 'Variação de Planche', cat: 'PUSH', lvl: 'advanced', tips: ['Braços totalmente estendidos, ombros à frente das mãos', 'Protração máxima das escápulas e glúteos contraídos', 'Quadril ao nível dos ombros, olhar ligeiramente à frente', 'Aquece punhos e cotovelos antes'], mistakes: ['Cotovelos dobrados', 'Quadril caído ou demasiado alto', 'Perder a protração (ombros encolhidos)'] },
+            { re: /\blever\b|alavanca/, label: 'Variação de Lever (alavanca)', cat: 'PULL', lvl: 'advanced', tips: ['Escápulas deprimidas e braços retos', 'Corpo em linha reta e glúteos contraídos', 'Entra e sai da posição com controlo, sem balançar', 'Aumenta o tempo de hold aos poucos'], mistakes: ['Quadril a cair', 'Cotovelos dobrados', 'Lombar arqueada'] },
+            { re: /muscleup/, label: 'Muscle-up', cat: 'PULL', lvl: 'advanced', tips: ['Puxa de forma explosiva em direção ao abdómen', 'Passa os cotovelos por cima da barra/argolas rapidamente', 'Usa false grip nas argolas', 'Termina em suporte com braços estendidos'], mistakes: ['Kipping excessivo', 'Transição lenta (fica preso)', 'Pegada demasiado larga'] },
+            { re: /handstand|parada de mao|\bhspu\b/, label: 'Parada de mãos (handstand)', cat: 'PUSH', lvl: 'advanced', tips: ['Mãos à largura dos ombros e dedos a controlar o equilíbrio', 'Corpo em linha reta, glúteos e abdómen contraídos', 'Olhar entre as mãos, ombros totalmente abertos', 'Treina a saída segura (bail) antes de avançar'], mistakes: ['Arquear a lombar (banana)', 'Ombros encolhidos', 'Perder o equilíbrio sem plano de saída'] },
+            { re: /dragon flag|human flag|bandeira/, label: 'Bandeira (flag) de core', cat: 'CORE', lvl: 'advanced', tips: ['Corpo reto, sem dobrar no quadril', 'Começa por versões tuck ou pelas negativas lentas', 'Core e lombar neutros, pegada firme', 'Poucas repetições de boa qualidade'], mistakes: ['Dobrar no quadril', 'Cair sem controlo', 'Pegada insegura'] },
+            { re: /pistol|shrimp|single leg|uma perna|1 perna|unilateral.*agachamento/, label: 'Agachamento numa perna', cat: 'LEGS', lvl: 'advanced', tips: ['Calcanhar sempre no chão', 'Braços à frente para equilíbrio e perna livre estendida', 'Joelho acompanha a direção do pé', 'Usa assistência (barra/argola) ao progredir'], mistakes: ['Calcanhar a levantar', 'Joelho a colapsar para dentro', 'Cair no fundo da descida'] },
+            { re: /nordic|nordica|isquio|hamstring|leg curl/, label: 'Posteriores da coxa (nordic / curl)', cat: 'LEGS', lvl: 'advanced', tips: ['Pés bem presos e joelhos acolchoados', 'Corpo reto dos joelhos à cabeça', 'Desce o mais lento possível, mãos a amortecer', 'Glúteos contraídos durante todo o movimento'], mistakes: ['Dobrar no quadril', 'Cair sem controlo', 'Pés mal fixos'] },
+            { re: /ponte de gluteo|glute bridge|hip thrust|gluteo|elevacao (de )?(quadril|pelve)/, label: 'Ponte de glúteos / elevação de quadril', cat: 'LEGS', lvl: 'basic', tips: ['Pés a cerca de um palmo dos glúteos, joelhos a 90°', 'Empurra o chão com os calcanhares e contrai os glúteos no topo', 'Pélvis levemente enrolada, sem arquear a lombar', 'Pausa de 1-2 s no topo'], mistakes: ['Arquear a lombar no topo', 'Empurrar com os dedos dos pés', 'Joelhos a abrir ou a fechar'] },
+            { re: /salto|jump|burpee|pliometr/, label: 'Salto / exercício pliométrico', cat: 'LEGS', lvl: 'intermediate', tips: ['Aquece tornozelos e joelhos antes de saltar', 'Aterra suavemente, com os joelhos fletidos', 'Usa os braços para ganhar impulso', 'Superfície estável e antiderrapante'], mistakes: ['Aterrar com os joelhos rígidos', 'Joelhos a colapsar na aterragem', 'Continuar a saltar com fadiga técnica'] },
+            { re: /agachamento|cossac|sissy|wall sit/, label: 'Agachamento', cat: 'LEGS', lvl: 'basic', tips: ['Pés à largura dos ombros (ou um pouco mais), pontas ligeiramente para fora', 'Joelhos acompanham a direção das pontas dos pés', 'Peito erguido e peso no meio do pé', 'Desce até a amplitude que consegues controlar'], mistakes: ['Joelhos a colapsar para dentro', 'Calcanhares a sair do chão', 'Tronco muito inclinado'] },
+            { re: /afundo|avanco|passada|bulgaro|bulgarian|step up/, label: 'Afundo / exercício unilateral de pernas', cat: 'LEGS', lvl: 'basic', tips: ['Passo longo e joelho da frente alinhado com o pé', 'Tronco ereto, quadril nivelado', 'Empurra com o calcanhar da perna da frente', 'Desce em controlo até o joelho de trás quase tocar o chão'], mistakes: ['Joelho a colapsar para dentro', 'Passo curto demais', 'Tronco inclinado à frente'] },
+            { re: /panturrilha|gemeo|calf|ponta dos pes/, label: 'Elevação de panturrilhas', cat: 'LEGS', lvl: 'basic', tips: ['Sobe o mais alto possível na ponta dos pés', 'Pausa de 1 s no topo', 'Desce devagar até alongar bem a panturrilha', 'Passa para uma perna só para progredir'], mistakes: ['Meia amplitude', 'Balançar', 'Rolar o tornozelo para fora'] },
+            { re: /lsit|vsit|manna/, label: 'L-sit / V-sit / Manna', cat: 'CORE', lvl: 'advanced', tips: ['Braços retos e ombros deprimidos', 'Pernas esticadas, pontas dos pés esticadas', 'Quadril ligeiramente à frente das mãos', 'Começa com joelhos dobrados e estende aos poucos'], mistakes: ['Joelhos dobrados', 'Ombros encolhidos', 'Cair para trás'] },
+            { re: /elevacao de (pernas|joelhos)|leg raise|knee raise|toes to bar|\bttb\b|knee tuck|elevacao.*barra/, label: 'Elevação de pernas / joelhos', cat: 'CORE', lvl: 'intermediate', tips: ['Ativa os ombros antes de subir (se estiveres pendurado)', 'Enrola a pélvis em vez de só levantar as pernas', 'Sem balanço, desce devagar', 'Pernas esticadas aumentam a dificuldade'], mistakes: ['Balançar demais', 'Levantar só com os flexores da anca', 'Descer sem controlo'] },
+            { re: /hollow|canoa/, label: 'Hollow body', cat: 'CORE', lvl: 'intermediate', tips: ['Lombar colada ao chão', 'Ombros e pernas elevados, braços para trás ou ao lado', 'Quanto mais baixas as pernas, mais difícil', 'Respira de forma curta e constante'], mistakes: ['Lombar a arquear', 'Tensionar o pescoço', 'Prender a respiração'] },
+            { re: /superman|bird dog|extensao lombar/, label: 'Extensão lombar / estabilidade (superman, bird dog)', cat: 'CORE', lvl: 'basic', tips: ['Movimentos lentos e controlados', 'Pescoço neutro, olhar para o chão', 'Contrai glúteos e costas sem hiperestender a lombar', 'Faz pausa de 1-2 s no ponto mais alto'], mistakes: ['Hiperestender a lombar', 'Levantar a cabeça demais', 'Fazer rápido, com balanço'] },
+            { re: /roda abdominal|ab wheel|roll ?out|rollout/, label: 'Roda abdominal / roll-out', cat: 'CORE', lvl: 'intermediate', tips: ['Posição hollow, pélvis enrolada', 'Estende só até onde controlas sem arquear a lombar', 'Puxa de volta com o abdómen, não com o quadril', 'Respira ao longo do movimento'], mistakes: ['Arquear a lombar', 'Quadril a cair', 'Ir longe demais cedo'] },
+            { re: /prancha|plank|apoio de antebraco/, label: 'Prancha (plank)', cat: 'CORE', lvl: 'basic', tips: ['Cotovelos sob os ombros, corpo em linha reta', 'Glúteos e abdómen contraídos', 'Respira de forma ritmada', 'Olhar para o chão, pescoço neutro'], mistakes: ['Quadril caído ou empinado', 'Prender a respiração', 'Olhar para a frente (pescoço estendido)'] },
+            { re: /abdominal|crunch|sit ?up|bicicleta|russian|twist|mountain|escalador/, label: 'Abdominal / trabalho de core dinâmico', cat: 'CORE', lvl: 'basic', tips: ['Movimento lento e controlado, sem puxar o pescoço', 'Expira ao contrair o abdómen', 'Lombar neutra e sem balanço', 'Qualidade antes de quantidade'], mistakes: ['Puxar o pescoço com as mãos', 'Usar impulso', 'Prender a respiração'] },
+            { re: /flexao|flexoes/, label: 'Flexão de braço', cat: 'PUSH', lvl: 'intermediate', tips: ['Prancha rígida: glúteos e abdómen contraídos', 'Cotovelos a cerca de 45° do tronco', 'Peito quase toca o chão e extensão total no topo', 'Mãos sob os ombros, escápulas ativas'], mistakes: ['Quadril caído ou empinado', 'Cotovelos abertos em T', 'Amplitude incompleta'] },
+            { re: /mergulho|paralela/, label: 'Mergulho (dips)', cat: 'PUSH', lvl: 'intermediate', tips: ['Ombros deprimidos e afastados das orelhas', 'Tronco ligeiramente inclinado à frente', 'Desce até os ombros ficarem ao nível dos cotovelos', 'Cotovelos junto ao corpo, extensão completa no topo'], mistakes: ['Descer demasiado fundo', 'Encolher os ombros', 'Balançar as pernas'] },
+            { re: /barra fixa|barra supinada|barra pronada|\bbarra\b/, label: 'Barra fixa (pull-up / chin-up)', cat: 'PULL', lvl: 'intermediate', tips: ['Retrai e deprime as escápulas antes de puxar', 'Peito à barra, cotovelos a apontar para o chão', 'Glúteos e abdómen contraídos, sem balançar', 'Descida lenta até os braços estenderem'], mistakes: ['Balançar ou usar kipping', 'Não estender totalmente os braços em baixo', 'Encolher os ombros'] },
+            { re: /remada|puxada|australiana/, label: 'Remada / puxada horizontal', cat: 'PULL', lvl: 'basic', tips: ['Corpo rígido em linha reta', 'Puxa o peito ao ponto de apoio, escápulas retraídas', 'Cotovelos a cerca de 45°', 'Desce devagar até os braços estenderem'], mistakes: ['Quadril a cair', 'Puxar só com os braços', 'Amplitude incompleta'] }
+        ];
+        // Modificadores (aparecem no nome e acrescentam dicas/erros específicos)
+        const guideModifiers = [
+            { re: /elastico/, tip: 'Ancora o elástico de forma segura e vai usando elásticos mais finos para reduzir a ajuda', mistake: 'Usar o ressalto do elástico em vez de força própria' },
+            { re: /argolas/, tip: 'Mantém as argolas estáveis e junto ao corpo, com turn-out no topo', mistake: 'Deixar as argolas a abrir ou a balançar' },
+            { re: /um braco|one arm|\bunilateral\b|um lado/, tip: 'Começa com assistência e treina os dois lados por igual', mistake: 'Rodar o tronco para compensar', lvl: 'advanced' },
+            { re: /arqueiro|archer/, tip: 'Mantém um braço estendido e desloca o tronco para o lado que trabalha', mistake: 'Deixar o braço estendido a ajudar demais' },
+            { re: /diamante|diamond/, tip: 'Mãos juntas e cotovelos rente ao corpo', mistake: 'Cotovelos a abrir para os lados' },
+            { re: /declin|pes elevados/, tip: 'Pés em apoio estável: quanto mais alto, mais carga nos ombros', mistake: 'Pés instáveis ou quadril dobrado' },
+            { re: /\bpike\b/, tip: 'Quadril alto em V invertido e cabeça a descer à frente das mãos', mistake: 'Pernas dobradas e pés longe das mãos' },
+            { re: /negativa|excentric/, tip: 'Faz a descida devagar (3-8 s), sem deixar cair', mistake: 'Soltar a descida sem controlo' },
+            { re: /\bhold\b|isometr|segurar|estatic/, tip: 'Entra na posição com controlo e mantém a tensão do corpo durante todo o tempo', mistake: 'Prender a respiração ou quebrar a linha do corpo a meio' },
+            { re: /lastro|weighted|colete|mochila|\bpeso\b/, tip: 'Só adiciona carga com a técnica sólida sem peso, e aumenta aos poucos', mistake: 'Ganhar carga à custa de amplitude' },
+            { re: /explosiv|clap|palmas/, tip: 'Aterra com suavidade, com os braços/joelhos ligeiramente fletidos', mistake: 'Aterrar rígido' }
+        ];
+
+        // Usa o guia do exercício parecido e acrescenta o que o nome tem de diferente (elástico, lastro, negativa...)
+        function useBuiltinGuide(res, ref, mods) {
+            const refNorm = guideNameVariants(ref.name).map(v => synTxt(normTxt(v))).join(' ');
+            const extra = mods.filter(m => !m.re.test(refNorm));
+            res.tips = [...exerciseGuides[ref.id].tips, ...extra.map(m => m.tip)].slice(0, extra.length ? 8 : 20);
+            res.mistakes = [...exerciseGuides[ref.id].mistakes, ...extra.map(m => m.mistake)].slice(0, extra.length ? 7 : 20);
+        }
+
+        // Analisa um nome e devolve { kind, label, ref, cat, level, tips, mistakes }
+        function analyzeExercise(name, opts) {
+            opts = opts || {};
+            const raw = String(name || '').trim();
+            const fallbackCat = opts.category && tipsByCategory[opts.category] ? opts.category : 'PUSH';
+            const res = { kind: 'none', label: '', ref: null, score: 0, cat: null, level: null, tips: [], mistakes: [] };
+            if (!raw) return res;
+            const nq = synTxt(normTxt(raw));
+            const q = guideTokens(raw);
+            let best = null, bestScore = 0;
+            exercises.forEach(ex => {
+                if (ex.id === opts.excludeId || ex.custom || !exerciseGuides[ex.id]) return;
+                let s = 0;
+                guideNameVariants(ex.name).forEach(v => {
+                    if (synTxt(normTxt(v)) === nq) s = Math.max(s, 1);
+                    s = Math.max(s, guideDice(q, guideTokens(v)));
+                });
+                if (s > bestScore) { bestScore = s; best = ex; }
+            });
+            const pat = guidePatterns.find(p => p.re.test(nq));
+            const mods = guideModifiers.filter(m => m.re.test(nq));
+            if (best && bestScore >= 0.6) {
+                res.kind = bestScore >= 0.85 ? 'exact' : 'similar';
+                res.ref = best; res.score = bestScore; res.label = best.name; res.cat = best.category; res.level = best.level || null;
+                useBuiltinGuide(res, best, mods);
+            } else if (pat) {
+                res.kind = 'pattern'; res.label = pat.label; res.cat = pat.cat; res.level = pat.lvl;
+                res.tips = [...pat.tips, ...mods.map(m => m.tip)].slice(0, 6);
+                res.mistakes = [...pat.mistakes, ...mods.map(m => m.mistake)].slice(0, 5);
+                mods.forEach(m => { if (m.lvl && LEVELS[m.lvl] && LEVELS[m.lvl].order > LEVELS[res.level].order) res.level = m.lvl; });
+            } else if (best && bestScore >= 0.4) {
+                res.kind = 'similar';
+                res.ref = best; res.score = bestScore; res.label = best.name; res.cat = best.category; res.level = best.level || null;
+                useBuiltinGuide(res, best, mods);
+            } else {
+                res.tips = [...tipsByCategory[fallbackCat]]; res.mistakes = [...mistakesByCategory[fallbackCat]];
+            }
+            return res;
+        }
+
+        // Guia final de um exercício: o que o utilizador guardou > guia próprio do exercício > reconhecimento pelo nome > categoria
+        function getExerciseGuide(ex) {
+            let tips = Array.isArray(ex.tips) && ex.tips.length ? ex.tips : null;
+            let mistakes = Array.isArray(ex.mistakes) && ex.mistakes.length ? ex.mistakes : null;
+            if (!tips || !mistakes) {
+                const own = !ex.custom && exerciseGuides[ex.id];
+                const base = own || analyzeExercise(ex.name, { excludeId: ex.id, category: ex.category });
+                tips = tips || base.tips;
+                mistakes = mistakes || base.mistakes;
+            }
+            return { tips, mistakes };
+        }
+
+        // ============ ORGANIZAÇÃO POR CATEGORIA ============
+        const EXERCISE_CATEGORY_ORDER = ['PUSH', 'PULL', 'LEGS', 'CORE'];
+        // Organização do catálogo: 1º por categoria (PUSH, PULL, LEGS, CORE) e, dentro de cada categoria, por ordem alfabética do nome
+        // (ignora acentos e maiúsculas; números contam como número). Devolve true se algo mudou.
+        const _alphaCollator = new Intl.Collator('pt-BR', { sensitivity: 'base', numeric: true });
+        function sortExercisesByCategory() {
+            const rank = c => { const i = EXERCISE_CATEGORY_ORDER.indexOf(c); return i < 0 ? 99 : i; };
+            const before = exercises.map(e => e.id).join('|');
+            const sorted = exercises.map((e, i) => [e, i]).sort((a, b) =>
+                rank(a[0].category) - rank(b[0].category) ||
+                _alphaCollator.compare(String(a[0].name || ''), String(b[0].name || '')) ||
+                a[1] - b[1]).map(x => x[0]);
+            exercises.splice(0, exercises.length, ...sorted);
+            return before !== exercises.map(e => e.id).join('|');
+        }
+        // Gera sempre um ID novo e único dentro da categoria (nunca reutiliza o ID de um exercício apagado em uso)
+        function nextExerciseId(category) {
+            let n = 1;
+            exercises.forEach(e => {
+                const m = String(e.id).match(/^([A-Z]+) (\d+)$/);
+                if (m && m[1] === category) n = Math.max(n, parseInt(m[2], 10) + 1);
+            });
+            let id;
+            do { id = `${category} ${n < 10 ? '0' + n : n}`; n++; } while (exercises.some(e => e.id === id));
+            return id;
+        }
+
         const generateFullDB = () => {
             let db = [];
 
@@ -1147,7 +1561,8 @@
         const gotNewElasticVariations = ensureElasticVariations(exercises);
         const gotNewExercises = ensureNewExercises(exercises);
         const gotLevelsOrCleanNames = ensureExerciseLevels(exercises);
-        if (!savedDB || gotNewElasticVariations || gotNewExercises || gotLevelsOrCleanNames) saveToLocal();
+        const gotRegrouped = sortExercisesByCategory();
+        if (!savedDB || gotNewElasticVariations || gotNewExercises || gotLevelsOrCleanNames || gotRegrouped) saveToLocal();
 
         // Carregar Dicas de Execução e Erros Comuns personalizados
         const savedTips = localStorage.getItem('calistenia_tips_v1');
@@ -1205,11 +1620,11 @@
                 const sEl = document.querySelector('#statSplit [data-seg="' + k + '"]'); if (sEl) sEl.style.flexGrow = n;
             });
 
-            document.getElementById('btnFilterALL').innerText = `Todos · ${exercises.length}`;
-            document.getElementById('btnFilterPUSH').innerText = `Empurrar (PUSH) · ${pushCnt}`;
-            document.getElementById('btnFilterPULL').innerText = `Puxar (PULL) · ${pullCnt}`;
-            document.getElementById('btnFilterLEGS').innerText = `Pernas · ${legsCnt}`;
-            document.getElementById('btnFilterCORE').innerText = `Core · ${coreCnt}`;
+            document.getElementById('tabCountALL').innerText = exercises.length;
+            document.getElementById('tabCountPUSH').innerText = pushCnt;
+            document.getElementById('tabCountPULL').innerText = pullCnt;
+            document.getElementById('tabCountLEGS').innerText = legsCnt;
+            document.getElementById('tabCountCORE').innerText = coreCnt;
         }
 
         function getExerciseGraphic(category, sizePx) {
@@ -1248,6 +1663,7 @@
                     : getExerciseGraphic(item.category, 34);
 
                 const card = document.createElement('div');
+                card.dataset.exId = item.id;
                 card.className = "bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-300 dark:border-slate-700 shadow-xl hover:shadow-2xl hover:scale-[1.03] hover:z-10 relative transition-all duration-300 flex flex-col justify-between cursor-default";
                 card.innerHTML = `
                     <div>
@@ -1371,7 +1787,7 @@
             const chips = ['PUSH', 'PULL', 'LEGS', 'CORE', 'CUSTOM', 'REST'].map(k => {
                 const on = cats.includes(k);
                 const col = categoryColors[k];
-                return `<button type="button" aria-pressed="${on}" onclick="toggleSlotCategory('${sid}', '${k}')" class="slot-chip ${on ? 'on' : ''}" style="--c:${col.solid}">${catIcon(k, 'font-size:13px;')}<span>${categoryLabels[k]}</span></button>`;
+                return `<button type="button" aria-pressed="${on}" onclick="toggleSlotCategory('${sid}', '${k}')" class="slot-chip ${on ? 'on' : ''}" style="--c:${col.solid}"><span class="slot-chip-ico">${catIcon(k, 'font-size:13px;')}</span><span class="slot-chip-txt">${catShort(k)}</span></button>`;
             }).join('');
 
             return `
@@ -1400,7 +1816,7 @@
                             <i class="fa-solid fa-list-check text-brand-push"></i> Montar${count ? ` (${count})` : ''}
                         </button>
                         <button type="button" onclick="showSlotWorkout('${sid}')" class="flex-1 text-[11px] font-bold py-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-1 shadow-md outline-none ${isRest ? 'bg-slate-200 dark:bg-slate-700 text-slate-500' : 'bg-brand-push hover:bg-blue-600 text-white hover:scale-[1.04] active:scale-95'}">
-                            <i class="fa-solid fa-eye"></i> Mostrar Treino
+                            <i class="fa-solid fa-eye"></i> Exercícios
                         </button>
                     </div>
                 </div>
@@ -1621,27 +2037,25 @@
                     const isOpen = expandedWorkoutIds.has(ex.id);
 
                     const itemCard = document.createElement('div');
-                    itemCard.className = "wk-card bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm" + (isDone ? " wk-done" : "") + (canReorder ? " drag-item" : "");
+                    itemCard.className = "wk-card bg-slate-50 dark:bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" + (isDone ? " wk-done" : "") + (canReorder ? " drag-item" : "");
                     itemCard.innerHTML = `
-                        <div class="flex justify-between items-center gap-4">
-                            <div class="flex items-center gap-3 min-w-0">
+                        <div class="flex justify-between items-center gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
                                 <button type="button" onclick="toggleWorkoutDone('${ex.id}')" class="wk-check ${isDone ? 'on' : ''}" aria-pressed="${isDone}" aria-label="Marcar como feito">${isDone ? '<i class="fa-solid fa-check"></i>' : idx + 1}</button>
                                 ${canReorder ? `
-                                <span class="drag-handle text-slate-300 dark:text-slate-600 text-xs px-0.5 shrink-0"><i class="fa-solid fa-grip-vertical"></i></span>
-                                <div class="flex flex-col gap-0.5 shrink-0">
-                                    <button onclick="moveExerciseInSlot(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-6 h-5 flex items-center justify-center rounded-md text-[10px] transition ${idx === 0 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para cima"><i class="fa-solid fa-chevron-up"></i></button>
-                                    <button onclick="moveExerciseInSlot(${idx}, 1)" ${idx === workoutList.length - 1 ? 'disabled' : ''} class="w-6 h-5 flex items-center justify-center rounded-md text-[10px] transition ${idx === workoutList.length - 1 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para baixo"><i class="fa-solid fa-chevron-down"></i></button>
+                                <span class="drag-handle text-slate-300 dark:text-slate-600 text-[10px] shrink-0"><i class="fa-solid fa-grip-vertical"></i></span>
+                                <div class="flex flex-col shrink-0">
+                                    <button onclick="moveExerciseInSlot(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-5 h-4 flex items-center justify-center rounded text-[9px] transition ${idx === 0 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para cima"><i class="fa-solid fa-chevron-up"></i></button>
+                                    <button onclick="moveExerciseInSlot(${idx}, 1)" ${idx === workoutList.length - 1 ? 'disabled' : ''} class="w-5 h-4 flex items-center justify-center rounded text-[9px] transition ${idx === workoutList.length - 1 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para baixo"><i class="fa-solid fa-chevron-down"></i></button>
                                 </div>` : ''}
                                 <div class="min-w-0">
-                                    <h4 class="text-sm font-black text-slate-800 dark:text-white">${ex.name}</h4>
-                                    <span class="text-[10px] font-bold ${c.text} block mt-0.5">${ex.id} · ${catShort(ex.category)}</span>
-                                    ${LEVELS[ex.level] ? `<div class="mt-1">${levelTagHtml(ex.level)}</div>` : ''}
+                                    <h4 class="text-xs font-black leading-tight text-slate-800 dark:text-white truncate">${ex.name}</h4>
+                                    <div class="flex items-center flex-wrap gap-x-2 leading-tight"><span class="text-[9px] font-bold ${c.text}">${ex.id} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 shrink-0">
-                                <div class="text-right">
-                                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Séries / Reps</span>
-                                    <div class="bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-black shadow-inner">
+                            <div class="flex items-center gap-2 shrink-0">
+                                <div class="text-right" title="Séries / Reps">
+                                    <div class="bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-black shadow-inner whitespace-nowrap">
                                         ${formatScheme(schemeText)}
                                     </div>
                                 </div>
@@ -1676,7 +2090,7 @@
             document.getElementById('viewWorkoutModal').classList.add('hidden');
         }
 
-        // Reordena os exercícios selecionados dentro do slot atualmente aberto em "Mostrar Treino"
+        // Reordena os exercícios selecionados dentro do slot atualmente aberto em "Exercícios"
         function moveExerciseInSlot(index, direction) {
             const slot = weeklySlots.find(s => s.id === currentViewSlotId);
             if (!slot || !slot.selectedExercises) return;
@@ -2263,17 +2677,22 @@
         let editingListType = null;
         let tempListEdit = [];
         function renderDetailTips() {
-            document.getElementById('detailTips').innerHTML = (tipsByCategory[detailCurrentCategory] || tipsByCategory['PUSH']).map(t => `<li class="flex gap-2"><i class="fa-solid fa-check text-brand-core mt-0.5"></i><span>${t}</span></li>`).join('');
+            const ex = exercises.find(e => e.id === detailCurrentId);
+            const list = ex ? getExerciseGuide(ex).tips : tipsByCategory['PUSH'];
+            document.getElementById('detailTips').innerHTML = list.map(t => `<li class="flex gap-2"><i class="fa-solid fa-check text-brand-core mt-0.5"></i><span>${escHtml(t)}</span></li>`).join('');
         }
         function renderDetailMistakes() {
-            document.getElementById('detailMistakes').innerHTML = (mistakesByCategory[detailCurrentCategory] || mistakesByCategory['PUSH']).map(t => `<li class="flex gap-2"><i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5"></i><span>${t}</span></li>`).join('');
+            const ex = exercises.find(e => e.id === detailCurrentId);
+            const list = ex ? getExerciseGuide(ex).mistakes : mistakesByCategory['PUSH'];
+            document.getElementById('detailMistakes').innerHTML = list.map(t => `<li class="flex gap-2"><i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5"></i><span>${escHtml(t)}</span></li>`).join('');
         }
         function toggleEditList(type) {
-            if (!detailCurrentCategory) return;
+            const exEdit = exercises.find(e => e.id === detailCurrentId);
+            if (!exEdit) return;
             if (editingListType === type) { cancelListEdits(type); return; }
             editingListType = type;
-            const source = type === 'tips' ? tipsByCategory : mistakesByCategory;
-            tempListEdit = [...(source[detailCurrentCategory] || [])];
+            const g = getExerciseGuide(exEdit);
+            tempListEdit = [...(type === 'tips' ? g.tips : g.mistakes)];
             renderListEditor(type);
             document.getElementById(type === 'tips' ? 'detailTips' : 'detailMistakes').classList.add('hidden');
             document.getElementById(type === 'tips' ? 'detailTipsEditor' : 'detailMistakesEditor').classList.remove('hidden');
@@ -2297,15 +2716,10 @@
         function saveListEdits(type) {
             const cleaned = tempListEdit.map(v => v.trim()).filter(v => v !== '');
             if (cleaned.length === 0) { alert('Mantém pelo menos um item na lista.'); return; }
-            if (type === 'tips') {
-                tipsByCategory[detailCurrentCategory] = cleaned;
-                localStorage.setItem('calistenia_tips_v1', JSON.stringify(tipsByCategory));
-                renderDetailTips();
-            } else {
-                mistakesByCategory[detailCurrentCategory] = cleaned;
-                localStorage.setItem('calistenia_mistakes_v1', JSON.stringify(mistakesByCategory));
-                renderDetailMistakes();
-            }
+            const exSave = exercises.find(e => e.id === detailCurrentId);
+            if (!exSave) return;
+            if (type === 'tips') { exSave.tips = cleaned; saveToLocal(); renderDetailTips(); }
+            else { exSave.mistakes = cleaned; saveToLocal(); renderDetailMistakes(); }
             exitListEditMode(type);
         }
         function cancelListEdits(type) { exitListEditMode(type); }
@@ -2358,6 +2772,9 @@
             document.getElementById('modalInputLevel').value = '';
             removeTempImage();
             renderModalVariations(['3x10']);
+            modalGuideDirty = false; modalCatTouched = false; modalLevelTouched = false; modalOrigName = '';
+            fillGuideFields([], []);
+            refreshGuideSuggestion(false);
             document.getElementById('editModal').classList.remove('hidden');
         }
 
@@ -2378,6 +2795,10 @@
                 document.getElementById('modalImagePreviewContainer').classList.add('flex');
             } else removeTempImage();
             renderModalVariations(item.variations);
+            modalGuideDirty = false; modalCatTouched = true; modalLevelTouched = true; modalOrigName = item.name;
+            const g = getExerciseGuide(item);
+            fillGuideFields(g.tips, g.mistakes);
+            refreshGuideSuggestion(false);
             document.getElementById('editModal').classList.remove('hidden');
         }
 
@@ -2431,6 +2852,100 @@
 
         function closeModal() { document.getElementById('editModal').classList.add('hidden'); }
 
+        // ============ SUGESTÃO AUTOMÁTICA (dicas + erros comuns) NA JANELA DE EXERCÍCIO ============
+        let modalGuideDirty = false, modalCatTouched = false, modalLevelTouched = false, modalOrigName = '';
+        let currentDetection = null, _guideTimer = null;
+
+        function guideLinesOf(id) { return document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean); }
+        function fillGuideFields(tips, mistakes) {
+            document.getElementById('modalInputTips').value = (tips || []).join('\n');
+            document.getElementById('modalInputMistakes').value = (mistakes || []).join('\n');
+        }
+
+        function refreshGuideSuggestion(force) {
+            const nameEl = document.getElementById('modalInputName');
+            const catEl = document.getElementById('modalInputCategory');
+            const lvlEl = document.getElementById('modalInputLevel');
+            const txt = document.getElementById('guideDetectText');
+            const meta = document.getElementById('guideDetectMeta');
+            const row = document.getElementById('guideApplyRow');
+            const raw = nameEl.value.trim();
+            const modalId = document.getElementById('modalId').value;
+            row.classList.add('hidden');
+
+            if (!raw) {
+                currentDetection = null;
+                txt.textContent = 'Escreve o nome do exercício para eu tentar identificá-lo.';
+                meta.textContent = 'Vou sugerir categoria, nível, dicas de execução e erros comuns.';
+                if (!modalGuideDirty && isCreatingNewExercise) fillGuideFields([], []);
+                return;
+            }
+            const nameChanged = isCreatingNewExercise || normTxt(raw) !== normTxt(modalOrigName);
+            if (!nameChanged && !force) {
+                currentDetection = null;
+                txt.textContent = 'Guia guardado deste exercício';
+                meta.textContent = 'Edita as dicas abaixo, ou altera o nome para eu gerar uma nova sugestão.';
+                return;
+            }
+
+            const parsed = splitNameAndLevel(raw);
+            const det = analyzeExercise(parsed.name, { excludeId: force ? '' : modalId, category: catEl.value });
+            if (parsed.level && !det.level) det.level = parsed.level;
+            currentDetection = det;
+
+            if (isCreatingNewExercise) {
+                if (det.cat && !modalCatTouched) catEl.value = det.cat;
+                if (det.level && !modalLevelTouched) lvlEl.value = det.level;
+            }
+
+            let line, note;
+            if (det.kind === 'exact' || det.kind === 'similar') {
+                const isSelf = det.ref && det.ref.id === modalId;
+                line = (det.kind === 'exact' ? 'Parece ser: ' : 'Parece-se com: ') + `<b>${escHtml(det.label)}</b>`;
+                note = isSelf ? 'Guia original deste exercício restaurado.'
+                    : (det.kind === 'exact' ? `Já existe no catálogo (${det.ref.id}). Usei o guia dele como exemplo.` : 'Usei o guia deste exercício como exemplo. Ajusta ao teu.');
+            } else if (det.kind === 'pattern') {
+                line = `Parece ser: <b>${escHtml(det.label)}</b>`;
+                note = 'Dicas e erros típicos deste tipo de movimento. Ajusta ao teu exercício.';
+            } else {
+                line = 'Não consegui identificar este exercício pelo nome.';
+                note = `Mostro dicas gerais da categoria ${catShort(catEl.value)}. Podes editá-las à vontade.`;
+            }
+            txt.innerHTML = line;
+            const bits = [];
+            if (det.cat) bits.push('Categoria: ' + catShort(det.cat));
+            if (det.level && LEVELS[det.level]) bits.push('Nível: ' + LEVELS[det.level].label);
+            meta.textContent = note + (bits.length ? '  ·  ' + bits.join('  ·  ') : '');
+
+            if (!modalGuideDirty || force) {
+                fillGuideFields(det.tips, det.mistakes);
+                if (force) modalGuideDirty = false;
+            }
+            const needCat = det.cat && det.cat !== catEl.value;
+            const needLvl = det.level && det.level !== lvlEl.value;
+            if (needCat || needLvl) row.classList.remove('hidden');
+        }
+
+        function scheduleGuideRefresh() { clearTimeout(_guideTimer); _guideTimer = setTimeout(() => refreshGuideSuggestion(false), 220); }
+        function applyDetectedMeta() {
+            if (!currentDetection) return;
+            if (currentDetection.cat) { document.getElementById('modalInputCategory').value = currentDetection.cat; modalCatTouched = true; }
+            if (currentDetection.level) { document.getElementById('modalInputLevel').value = currentDetection.level; modalLevelTouched = true; }
+            document.getElementById('guideApplyRow').classList.add('hidden');
+            if (!modalGuideDirty) refreshGuideSuggestion(false);
+        }
+        function regenerateGuideSuggestion() { modalGuideDirty = false; refreshGuideSuggestion(true); }
+
+        function highlightExerciseCard(id) {
+            setTimeout(() => {
+                const el = document.querySelector(`#exercisesGrid [data-ex-id="${CSS.escape(id)}"]`);
+                if (!el) return;
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.classList.add('ex-flash');
+                setTimeout(() => el.classList.remove('ex-flash'), 2400);
+            }, 80);
+        }
+
         function saveExerciseChange() {
             const id = document.getElementById('modalId').value;
             const parsedName = splitNameAndLevel(document.getElementById('modalInputName').value.trim());
@@ -2448,37 +2963,343 @@
             inputs.forEach(input => { const val = input.value.trim(); if (val !== '') newVariations.push(val); });
             if (newVariations.length === 0) { alert('Deves fornecer pelo menos uma progressão válida.'); return; }
 
+            const tipsList = guideLinesOf('modalInputTips');
+            const mistakesList = guideLinesOf('modalInputMistakes');
+            let addedId = null;
+
             if (isCreatingNewExercise) {
-                const countCategory = exercises.filter(e => e.category === category).length + 1;
-                const generatedId = `${category} ${countCategory < 10 ? '0' + countCategory : countCategory}`;
-                exercises.push({
+                const generatedId = nextExerciseId(category);
+                const newEx = {
                     id: generatedId,
                     name: name,
                     category: category,
                     level: level,
                     variations: newVariations,
-                    image: tempImageBase64
-                });
+                    image: tempImageBase64,
+                    custom: true
+                };
+                if (tipsList.length) newEx.tips = tipsList;
+                if (mistakesList.length) newEx.mistakes = mistakesList;
+                exercises.push(newEx);
+                addedId = generatedId;
             } else {
                 const itemIndex = exercises.findIndex(e => e.id === id);
                 if (itemIndex !== -1) {
-                    exercises[itemIndex].name = name;
-                    exercises[itemIndex].category = category;
-                    exercises[itemIndex].level = level;
-                    exercises[itemIndex].variations = newVariations;
-                    exercises[itemIndex].image = tempImageBase64;
+                    // Mudou de categoria: passa para o fim do novo grupo
+                    if (exercises[itemIndex].category !== category) exercises.push(exercises.splice(itemIndex, 1)[0]);
+                    const itemIndex2 = exercises.findIndex(e => e.id === id);
+                    exercises[itemIndex2].name = name;
+                    exercises[itemIndex2].category = category;
+                    exercises[itemIndex2].level = level;
+                    exercises[itemIndex2].variations = newVariations;
+                    exercises[itemIndex2].image = tempImageBase64;
+                    if (tipsList.length) exercises[itemIndex2].tips = tipsList; else delete exercises[itemIndex2].tips;
+                    if (mistakesList.length) exercises[itemIndex2].mistakes = mistakesList; else delete exercises[itemIndex2].mistakes;
                 }
             }
 
+            // Mantém cada exercício junto da sua categoria (novo ou com categoria alterada)
+            sortExercisesByCategory();
             saveToLocal();
             closeModal();
             updateCounters();
-            renderExercises();
+            if (addedId && currentFilter !== 'ALL' && currentFilter !== category) filterCategory(category);
+            else renderExercises();
+            if (addedId) highlightExerciseCard(addedId);
         }
 
-        document.getElementById('fileUpload').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) { alert(`Plano "${file.name}" importado com sucesso!`); this.value = ''; }
+        // ============ EXPORTAR / IMPORTAR SEMANA ============
+        const SHARE_APP = 'calistenia-semana';
+        const SHARE_VERSION = 1;
+        const SHARE_PREFIX = 'CALI1:';
+        const SHARE_CATS = ['PUSH', 'PULL', 'LEGS', 'CORE'];
+        const SHARE_SLOT_CATS = ['PUSH', 'PULL', 'LEGS', 'CORE', 'REST'];
+        const SHARE_ID_RE = /^[A-Z]{3,5} \d{1,4}$/;
+
+        function shareEsc(v) {
+            return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // Monta o pacote da semana: dias + exercícios escolhidos (ids) + dados completos dos exercícios personalizados
+        function buildSharePackage(includeImages) {
+            const baseIds = new Set(generateFullDB().map(e => e.id));
+            extraExercises.forEach(e => baseIds.add(e.id));
+            const used = [];
+            weeklySlots.forEach(sl => (sl.selectedExercises || []).forEach(id => { if (!used.includes(id)) used.push(id); }));
+            const custom = [];
+            used.forEach(id => {
+                const ex = exercises.find(e => e.id === id);
+                if (!ex || !(ex.custom || !baseIds.has(ex.id))) return;
+                const c = { id: ex.id, name: ex.name, category: ex.category, level: ex.level || '', variations: Array.isArray(ex.variations) ? ex.variations.slice() : [] };
+                if (Array.isArray(ex.tips) && ex.tips.length) c.tips = ex.tips.slice();
+                if (Array.isArray(ex.mistakes) && ex.mistakes.length) c.mistakes = ex.mistakes.slice();
+                if (includeImages && ex.image) c.image = ex.image;
+                custom.push(c);
+            });
+            return {
+                app: SHARE_APP,
+                version: SHARE_VERSION,
+                exportedAt: new Date().toISOString(),
+                week: weeklySlots.map(sl => ({
+                    title: sl.title,
+                    categories: getSlotCats(sl).slice(),
+                    notes: sl.notes || '',
+                    exercises: (sl.selectedExercises || []).slice()
+                })),
+                custom
+            };
+        }
+
+        function encodeShareCode(pkg) {
+            const bytes = new TextEncoder().encode(JSON.stringify(pkg));
+            let bin = '';
+            bytes.forEach(b => { bin += String.fromCharCode(b); });
+            return SHARE_PREFIX + btoa(bin);
+        }
+
+        function decodeShareCode(text) {
+            let t = text.trim();
+            if (t.startsWith(SHARE_PREFIX)) t = t.slice(SHARE_PREFIX.length);
+            t = t.replace(/\s+/g, '');
+            const bin = atob(t);
+            const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+            return JSON.parse(new TextDecoder().decode(bytes));
+        }
+
+        // Limpa e valida tudo o que vem de fora antes de tocar nos dados do utilizador
+        function sanitizeSharePackage(raw) {
+            if (!raw || typeof raw !== 'object' || raw.app !== SHARE_APP || !Array.isArray(raw.week) || !raw.week.length) {
+                throw new Error('Este conteúdo não é uma semana de treino exportada por esta agenda.');
+            }
+            const clean = (v, max) => String(v == null ? '' : v).replace(/[<>`]/g, '').trim().slice(0, max);
+            const cleanList = (arr, maxItems, maxLen) => (Array.isArray(arr) ? arr : []).map(x => clean(x, maxLen)).filter(Boolean).slice(0, maxItems);
+
+            const custom = (Array.isArray(raw.custom) ? raw.custom : []).slice(0, 200).map(c => {
+                if (!c || typeof c !== 'object') return null;
+                const name = clean(c.name, 120);
+                const category = SHARE_CATS.includes(c.category) ? c.category : null;
+                if (!name || !category) return null;
+                const out = {
+                    id: SHARE_ID_RE.test(String(c.id || '')) ? String(c.id) : '',
+                    name,
+                    category,
+                    level: LEVELS[c.level] ? c.level : '',
+                    variations: cleanList(c.variations, 20, 200)
+                };
+                if (!out.variations.length) out.variations = ['3x10'];
+                const tips = cleanList(c.tips, 20, 300);
+                const mistakes = cleanList(c.mistakes, 20, 300);
+                if (tips.length) out.tips = tips;
+                if (mistakes.length) out.mistakes = mistakes;
+                if (typeof c.image === 'string' && /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(c.image)) out.image = c.image;
+                return out;
+            }).filter(Boolean);
+
+            const week = raw.week.slice(0, 7).map((d, i) => {
+                d = d && typeof d === 'object' ? d : {};
+                let cats = (Array.isArray(d.categories) ? d.categories : []).filter(c => SHARE_SLOT_CATS.includes(c));
+                cats = cats.filter((c, k) => cats.indexOf(c) === k);
+                if (!cats.length) cats = ['PUSH'];
+                const ids = (Array.isArray(d.exercises) ? d.exercises : []).map(String).filter(id => SHARE_ID_RE.test(id));
+                return {
+                    title: clean(d.title, 40) || ('Dia ' + (i + 1)),
+                    categories: cats,
+                    notes: clean(d.notes, 300),
+                    exercises: ids.filter((id, k) => ids.indexOf(id) === k)
+                };
+            });
+            return { week, custom };
+        }
+
+        function parseShareInput(text) {
+            const t = (text || '').trim();
+            if (!t) throw new Error('empty');
+            let raw;
+            try {
+                raw = t.startsWith('{') ? JSON.parse(t) : decodeShareCode(t);
+            } catch (e) {
+                throw new Error('Não foi possível ler este conteúdo. Confira se o arquivo ou o código está completo.');
+            }
+            return sanitizeSharePackage(raw);
+        }
+
+        // ----- Exportar -----
+        function openExportModal() {
+            const pkg = buildSharePackage(false);
+            const totalEx = pkg.week.reduce((n, d) => n + d.exercises.length, 0);
+            const chip = (icon, txt) => `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-200"><i class="${icon} text-brand-push"></i>${txt}</span>`;
+            document.getElementById('exportSummary').innerHTML =
+                chip('fa-solid fa-calendar-week', `${pkg.week.length} dias`) +
+                chip('fa-solid fa-dumbbell', `${totalEx} exercício${totalEx === 1 ? '' : 's'} escolhido${totalEx === 1 ? '' : 's'}`) +
+                chip('fa-solid fa-star', `${pkg.custom.length} personalizado${pkg.custom.length === 1 ? '' : 's'}`);
+            document.getElementById('exportCode').value = encodeShareCode(pkg);
+            const btn = document.getElementById('exportCopyBtn');
+            btn.querySelector('span').innerText = 'Copiar código';
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+        function closeExportModal() { document.getElementById('exportModal').classList.add('hidden'); }
+
+        function downloadWeekFile() {
+            const pkg = buildSharePackage(true);
+            const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `semana-calistenia-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function copyWeekCode() {
+            const ta = document.getElementById('exportCode');
+            const label = document.getElementById('exportCopyBtn').querySelector('span');
+            const done = () => { label.innerText = 'Código copiado!'; setTimeout(() => { label.innerText = 'Copiar código'; }, 1800); };
+            const fallback = () => { ta.focus(); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { label.innerText = 'Selecione e copie (Ctrl+C)'; } };
+            if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(ta.value).then(done).catch(fallback);
+            else fallback();
+        }
+
+        // ----- Importar -----
+        let pendingImport = null;
+
+        function openImportModal() {
+            resetImportModal();
+            document.getElementById('importModal').classList.remove('hidden');
+        }
+        function closeImportModal() { document.getElementById('importModal').classList.add('hidden'); }
+
+        function resetImportModal() {
+            pendingImport = null;
+            document.getElementById('importCode').value = '';
+            document.getElementById('importFileInput').value = '';
+            document.getElementById('importFileLabel').innerText = 'Escolher arquivo (.json)';
+            document.getElementById('importError').classList.add('hidden');
+            document.getElementById('importPreview').classList.add('hidden');
+            document.getElementById('importPreview').innerHTML = '';
+            document.getElementById('importCancelBtn').innerText = 'Cancelar';
+            const btn = document.getElementById('importConfirmBtn');
+            btn.disabled = true;
+            btn.classList.remove('hidden');
+        }
+
+        function showImportError(msg) {
+            pendingImport = null;
+            document.getElementById('importPreview').classList.add('hidden');
+            document.getElementById('importConfirmBtn').disabled = true;
+            const el = document.getElementById('importError');
+            if (msg) { el.innerText = msg; el.classList.remove('hidden'); } else el.classList.add('hidden');
+        }
+
+        function handleImportText(text) {
+            let pkg;
+            try { pkg = parseShareInput(text); }
+            catch (e) { showImportError(e.message === 'empty' ? '' : e.message); return; }
+            pendingImport = pkg;
+            showImportError('');
+            pendingImport = pkg;
+
+            const customIds = new Set(pkg.custom.map(c => c.id).filter(Boolean));
+            let dropped = 0;
+            const rows = pkg.week.map(d => {
+                const valid = d.exercises.filter(id => exercises.some(e => e.id === id) || customIds.has(id));
+                dropped += d.exercises.length - valid.length;
+                const isRest = d.categories.includes('REST');
+                const info = valid.length ? `${valid.length} exercício${valid.length === 1 ? '' : 's'}` : (isRest ? 'Descanso' : 'Sem exercícios');
+                return `<div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+                    <span class="text-xs font-black text-slate-700 dark:text-slate-200 truncate">${shareEsc(d.title)}</span>
+                    <span class="text-[11px] font-bold text-slate-400 shrink-0">${shareEsc(d.categories.map(c => categoryLabels[c] || c).join(' + '))} · ${info}</span>
+                </div>`;
+            }).join('');
+
+            const hasWork = pkg.week.some(d => d.exercises.length);
+            const warn = (cls, icon, txt) => `<p class="mt-2 text-[11px] font-bold ${cls}"><i class="${icon} mr-1"></i>${txt}</p>`;
+            let notes = warn('text-amber-600 dark:text-amber-400', 'fa-solid fa-triangle-exclamation', 'Isto vai substituir a sua semana de treino atual.');
+            if (pkg.custom.length) notes += warn('text-slate-500 dark:text-slate-400', 'fa-solid fa-star', `${pkg.custom.length} exercício${pkg.custom.length === 1 ? '' : 's'} personalizado${pkg.custom.length === 1 ? '' : 's'} será${pkg.custom.length === 1 ? '' : 'ão'} adicionado${pkg.custom.length === 1 ? '' : 's'} à sua lista.`);
+            if (dropped) notes += warn('text-slate-500 dark:text-slate-400', 'fa-solid fa-circle-info', `${dropped} exercício${dropped === 1 ? '' : 's'} não encontrado${dropped === 1 ? '' : 's'} nesta versão da agenda ${dropped === 1 ? 'será ignorado' : 'serão ignorados'}.`);
+            if (!hasWork) notes += warn('text-slate-500 dark:text-slate-400', 'fa-solid fa-circle-info', 'Esta semana não tem exercícios escolhidos, só dias e notas.');
+
+            const prev = document.getElementById('importPreview');
+            prev.innerHTML = `<p class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">Semana encontrada</p><div class="space-y-1.5">${rows}</div>${notes}`;
+            prev.classList.remove('hidden');
+            document.getElementById('importConfirmBtn').disabled = false;
+        }
+
+        function onImportCodeInput() {
+            document.getElementById('importFileInput').value = '';
+            document.getElementById('importFileLabel').innerText = 'Escolher arquivo (.json)';
+            handleImportText(document.getElementById('importCode').value);
+        }
+
+        document.getElementById('importFileInput').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            document.getElementById('importCode').value = '';
+            document.getElementById('importFileLabel').innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = () => handleImportText(String(reader.result || ''));
+            reader.onerror = () => showImportError('Não foi possível abrir o arquivo.');
+            reader.readAsText(file);
+        });
+
+        function applyImport() {
+            const pkg = pendingImport;
+            if (!pkg) return;
+
+            // 1) Exercícios personalizados: reaproveita se já existir o mesmo (nome + categoria); senão cria, trocando o id se houver conflito
+            const idMap = {};
+            pkg.custom.forEach(c => {
+                const same = exercises.find(e => e.category === c.category && e.name.trim().toLowerCase() === c.name.toLowerCase());
+                if (same) { if (c.id) idMap[c.id] = same.id; return; }
+                let newId = c.id;
+                if (!newId || exercises.some(e => e.id === newId)) newId = nextExerciseId(c.category);
+                const ex = { id: newId, name: c.name, category: c.category, level: c.level, variations: c.variations, image: c.image || null, custom: true };
+                if (c.tips) ex.tips = c.tips;
+                if (c.mistakes) ex.mistakes = c.mistakes;
+                exercises.push(ex);
+                if (c.id) idMap[c.id] = newId;
+            });
+
+            // 2) Semana: substitui os dias e os exercícios escolhidos
+            weeklySlots = pkg.week.map((d, i) => {
+                const ids = d.exercises.map(id => idMap[id] || id).filter(id => exercises.some(e => e.id === id));
+                return {
+                    id: 'slot-' + (i + 1),
+                    title: d.title,
+                    category: d.categories[0],
+                    categories: d.categories.slice(),
+                    notes: d.notes,
+                    selectedExercises: ids.filter((id, k) => ids.indexOf(id) === k)
+                };
+            });
+
+            sortExercisesByCategory();
+            saveToLocal();
+            savePlanToLocal();
+            workoutDone = {};
+            try { localStorage.removeItem('calistenia_done_v1'); } catch (e) {}
+            expandedSlots.clear();
+            renderExercises();
+            updateCounters();
+            renderWeeklyPlan();
+
+            // 3) Confirmação dentro da própria janela
+            pendingImport = null;
+            document.getElementById('importError').classList.add('hidden');
+            const prev = document.getElementById('importPreview');
+            prev.innerHTML = `<div class="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-sm font-black text-green-700 dark:text-green-300 text-center"><i class="fa-solid fa-circle-check mr-2"></i>Semana importada! Seus treinos já estão montados.</div>`;
+            prev.classList.remove('hidden');
+            document.getElementById('importConfirmBtn').classList.add('hidden');
+            document.getElementById('importCancelBtn').innerText = 'Fechar';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            ['exportModal', 'importModal'].forEach(id => {
+                const m = document.getElementById(id);
+                if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+            });
         });
 
         // ============ TEMA CLARO/ESCURO ============
@@ -2498,6 +3319,11 @@
         enhanceSelect(document.getElementById('builderCategoryFilter'), { wrapClass: 'sm:w-64 shrink-0', iconFor: catSelectIcon, colorFor: catSelectColor, minMenuWidth: 240 });
         enhanceSelect(document.getElementById('modalInputCategory'), { iconFor: catSelectIcon, colorFor: catSelectColor });
         enhanceSelect(document.getElementById('modalInputLevel'), { iconFor: levelSelectIcon, colorFor: levelSelectColor });
+        document.getElementById('modalInputName').addEventListener('input', scheduleGuideRefresh);
+        document.getElementById('modalInputCategory').addEventListener('change', () => { modalCatTouched = true; refreshGuideSuggestion(false); });
+        document.getElementById('modalInputLevel').addEventListener('change', () => { modalLevelTouched = true; refreshGuideSuggestion(false); });
+        document.getElementById('modalInputTips').addEventListener('input', () => { modalGuideDirty = true; });
+        document.getElementById('modalInputMistakes').addEventListener('input', () => { modalGuideDirty = true; });
         filterCategory('ALL');
         updateCounters();
         renderWeeklyPlan();
@@ -2519,8 +3345,7 @@
                     <option value="linear-gradient(135deg, #0a0a0a 0%, #1a0000 22%, #8b0000 45%, #4d0000 65%, #ff2b2b 85%, #0a0a0a 100%)">6. Tanjiro - Marca Sombria</option>
                     <option value="linear-gradient(180deg, #2d1b4e, #1a0f2e, #0d0510)">7. Tanjiro - Hakama Roxo</option>
                     <option value="radial-gradient(circle at 25% 15%, rgba(255,0,60,0.45) 0%, rgba(255,0,60,0) 35%), radial-gradient(circle at 75% 85%, rgba(180,0,255,0.28) 0%, rgba(180,0,255,0) 40%), linear-gradient(135deg, #1a0033 0%, #330066 30%, #0d0015 60%, #000000 100%)">8. Akaza - Abismo Infinito</option>
-                    <option value="repeating-conic-gradient(#123524 0% 25%, #0a0a0a 0% 50%) 0 0/40px 40px">9. Tanjiro - Haori Xadrez</option>
-                    <option value="linear-gradient(135deg, transparent 0%, transparent 18%, #00b579 18%, #00b579 45%, transparent 45%, transparent 63%, #00b579 63%, #00b579 82%, transparent 82%), #000000">21. Demon Slayer (Tanjiro Haori)</option>
+                    <option value="linear-gradient(135deg, transparent 0%, transparent 18%, #00b579 18%, #00b579 45%, transparent 45%, transparent 63%, #00b579 63%, #00b579 82%, transparent 82%), #000000">9. Demon Slayer (Tanjiro Haori)</option>
                 </select>
                 <div style="display:flex; justify-content:space-between; align-items:center;">CUSTOM: <input type="color" id="timerCustomColor" oninput="applyTimerCustomColor()"></div>
             </div>
