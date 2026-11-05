@@ -357,6 +357,103 @@
         .fw-days { gap: 10px; padding: 6px 4px 12px; }
         .fw-day { flex: 1 0 64px; padding: 9px 6px; }
 
+        /* === SEMANA MAXIMIZADA + SCROLL TRAVADO + TREINO AO VIVO === */
+        html.scroll-locked, body.scroll-locked { overflow: hidden !important; }
+        #viewFullWeekModal { padding: 10px; }
+        #viewFullWeekModal .fw-panel { max-width: none; width: 100%; height: 100%; max-height: none; }
+        #fullWeekList { overscroll-behavior: contain; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+        #liveSessionModal.mdl-open { animation: bldBackdropIn .2s ease; }
+        #liveSessionModal.mdl-open .ls-panel { animation: bldPanelIn .32s cubic-bezier(.2,.8,.2,1); }
+        #liveSessionModal.mdl-closing { animation: bldBackdropOut .17s ease forwards; pointer-events: none; }
+        #liveSessionModal.mdl-closing .ls-panel { animation: bldPanelOut .17s ease forwards; }
+        .ls-panel { width: 100%; height: 100%; overflow: hidden; }
+        .ls-body { display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 18px; overscroll-behavior: contain; }
+        .ls-scroll { overscroll-behavior: contain; }
+        .ls-ghost { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; font-size: 11px; font-weight: 900; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; cursor: pointer; outline: none; transition: transform .15s ease, border-color .2s ease; }
+        .ls-ghost:hover { transform: translateY(-1px); border-color: #94a3b8; }
+        .dark .ls-ghost { background: #0f172a; border-color: #334155; color: #cbd5e1; }
+        .ls-hero { border-radius: 24px; overflow: hidden; border: 1px solid #e2e8f0; background: #f8fafc; box-shadow: 0 12px 30px -20px rgba(15,23,42,.5); }
+        .dark .ls-hero { background: #0f172a; border-color: #334155; }
+        .ls-top { padding: 11px 18px; color: #fff; }
+        .ls-kicker { font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; opacity: .92; }
+        .ls-top h2 { font-size: clamp(20px, 2.5vw, 30px); font-weight: 900; line-height: 1.1; margin-top: 2px; }
+        .ls-box { flex: 1 1 150px; border-radius: 16px; padding: 8px 14px; background: #fff; border: 1px solid #e2e8f0; }
+        .dark .ls-box { background: #1e293b; border-color: #334155; }
+        .ls-box small, .ls-next small, .ls-route small { display: block; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; }
+        .ls-box b { display: inline-block; font-size: 34px; font-weight: 900; line-height: 1.1; color: var(--c); }
+        .ls-box .of { font-size: 16px; font-weight: 800; color: #64748b; margin-left: 6px; }
+        .ls-box em { display: block; font-size: 11px; font-weight: 700; font-style: normal; color: #64748b; }
+        .ls-sets { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .ls-chip { flex: 1 1 64px; max-width: 120px; padding: 7px 6px; border-radius: 14px; border: 2px solid #cbd5e1; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 3px; color: #94a3b8; font-weight: 900; outline: none; }
+        .dark .ls-chip { background: #1e293b; border-color: #475569; }
+        .ls-chip .n { font-size: 18px; line-height: 1; } .ls-chip .t { font-size: 10px; font-weight: 800; }
+        .ls-chip.done { background: #16a34a; border-color: #16a34a; color: #fff; cursor: pointer; }
+        .ls-chip.cur { border-color: var(--c); color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
+        .ls-chip.pop { animation: lsPop .45s cubic-bezier(.2,.8,.2,1); }
+        @keyframes lsPop { 0% { transform: scale(.7); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+        .ls-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ls-btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 14px; border: 0; outline: none; cursor: pointer; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; color: #fff; background: var(--c); box-shadow: 0 12px 24px -12px var(--c); transition: transform .15s ease, opacity .2s ease; }
+        .ls-btn:hover:not(:disabled) { transform: translateY(-2px); } .ls-btn:active:not(:disabled) { transform: scale(.95); }
+        .ls-btn.sec { background: #e2e8f0; color: #334155; box-shadow: none; padding: 11px 15px; }
+        .dark .ls-btn.sec { background: #334155; color: #e2e8f0; }
+        .ls-btn:disabled { opacity: .4; cursor: default; }
+        #liveMain { display: flex; flex-direction: column; }
+        #liveMain > .ls-hero { flex-shrink: 0; }
+        .ls-nav { margin-top: auto; position: sticky; bottom: 0; z-index: 2; padding-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #fff; }
+        .dark .ls-nav { background: #1e293b; }
+        .ls-nav .ls-next { margin-top: 0; min-width: 0; padding: 6px 10px; gap: 8px; border-radius: 12px; border: 1px solid #e2e8f0; background: transparent; box-shadow: none; opacity: .75; transition: opacity .2s ease, border-color .2s ease; }
+        .dark .ls-nav .ls-next { border-color: #334155; }
+        .ls-nav button.ls-next:hover { transform: none; opacity: 1; border-color: var(--c); }
+        .ls-nav .ls-next > span:not(.ls-ix):not(.text-2xl) { flex: 1 1 auto; min-width: 0; }
+        .ls-nav .ls-next .ls-ix { width: 20px; height: 20px; border-radius: 7px; font-size: 10px; background: #94a3b8; }
+        .ls-nav .ls-next:hover .ls-ix { background: var(--c); }
+        .ls-nav .ls-next .text-2xl { font-size: 16px; line-height: 1; }
+        .ls-nav .ls-next small { font-size: 9px; letter-spacing: .06em; }
+        .ls-nav .ls-next small i { font-size: 8px; margin: 0 4px; }
+        .ls-nav .ls-next b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; font-weight: 800; color: #475569; }
+        .dark .ls-nav .ls-next b { color: #cbd5e1; }
+        .ls-nav .ls-next em, .ls-nav .ls-next .fw-scheme { display: none; }
+        .ls-nav .ls-next.prev { border-style: solid; }
+        .ls-nav .ls-next:last-child { text-align: right; flex-direction: row-reverse; }
+        .ls-next.off { opacity: .4 !important; cursor: default; }
+        @media (max-width: 640px) { .ls-nav { grid-template-columns: 1fr 1fr; } .ls-nav .ls-next small { font-size: 8px; } }
+        /* Computador/notebook: logo abaixo do cartão do exercício, pequenos e lado a lado (não ocupam a largura toda) */
+        @media (min-width: 641px) {
+            .ls-nav { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: stretch; gap: 8px; margin-top: 10px; padding-top: 0; position: static; background: transparent; }
+            .dark .ls-nav { background: transparent; }
+            .ls-nav .ls-next { flex: 0 1 auto; width: auto; max-width: 200px; padding: 5px 9px; }
+            .ls-nav .ls-next:last-child { text-align: left; flex-direction: row; }
+            .ls-nav .ls-next > span:not(.ls-ix):not(.text-2xl) { flex: 0 1 auto; }
+            .ls-nav .ls-next b { font-size: 11px; max-width: 150px; }
+        }
+        .ls-next { margin-top: 16px; width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 20px; border: 2px dashed var(--c, #cbd5e1); background: transparent; cursor: pointer; outline: none; text-align: left; transition: transform .15s ease; }
+        button.ls-next:hover { transform: translateY(-2px); }
+        .ls-next b, .ls-route b { font-size: 14px; font-weight: 900; color: #1e293b; } .dark .ls-next b, .dark .ls-route b { color: #fff; }
+        .ls-next em { display: block; font-size: 11px; font-weight: 700; font-style: normal; color: #64748b; }
+        .ls-ix { width: 28px; height: 28px; border-radius: 10px; background: var(--c); color: #fff; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .ls-route { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 14px; border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer; outline: none; transition: transform .15s ease; }
+        .dark .ls-route { background: #0f172a; border-color: #334155; }
+        .ls-route:hover { transform: translateX(3px); }
+        .ls-route.cur { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); box-shadow: 0 0 0 2px var(--c); }
+        .ls-route.nxt { border: 1px dashed var(--c); }
+        .ls-route.done { opacity: .6; } .ls-route.done b { text-decoration: line-through; }
+        @media (max-width: 900px) { .ls-body { display: block; overflow-y: auto; } .ls-scroll { overflow: visible !important; } .ls-side { margin-top: 16px; } }
+        /* Semana: o hover desloca o conteúdo por transform (não muda a largura, então o nome não quebra de linha) */
+        .fw-row:hover { padding-left: 18px; }
+        .fw-row > div:first-child { transition: transform .18s ease; }
+        .fw-row:hover > div:first-child { transform: translateX(4px); }
+        /* Cronômetro minimalista */
+        .ls-timer { display: inline-flex; align-items: center; gap: 2px; padding: 3px 6px 3px 10px; border-radius: 16px; border: 1px solid #cbd5e1; }
+        .dark .ls-timer { border-color: #475569; }
+        .ls-timer input { width: 58px; background: transparent; border: 0; outline: none; text-align: center; border-radius: 8px; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; color: #1e293b; }
+        .dark .ls-timer input { color: #fff; }
+        .ls-timer input:focus { background: rgba(148,163,184,.2); }
+        .ls-timer button { width: 30px; height: 30px; border-radius: 999px; border: 0; background: transparent; color: #64748b; font-size: 12px; cursor: pointer; outline: none; transition: background-color .15s ease, color .15s ease; }
+        .ls-timer button:hover { background: rgba(148,163,184,.22); color: var(--c, #2563eb); }
+        .ls-timer.done { border-color: #ef4444; animation: lsShake .5s ease; }
+        .ls-timer.done input { color: #ef4444; }
+        @keyframes lsShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
         #weeklyGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); grid-auto-rows: auto; align-items: stretch; gap: 18px; }
         #weeklyGrid > .slot-card { min-width: 0; }
         .slot-card { border-radius: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 20px -16px rgba(15,23,42,.4); }
@@ -746,7 +843,7 @@
 
     <!-- ============ MODAL DA SEMANA COMPLETA ============ -->
     <div id="viewFullWeekModal" onclick="if(event.target===this)closeFullWeek()" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
-        <div class="fw-panel bg-white dark:bg-slate-800 max-w-6xl w-full rounded-3xl shadow-2xl border border-slate-300 dark:border-slate-700 p-6 flex flex-col max-h-[90vh]">
+        <div class="fw-panel bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-300 dark:border-slate-700 p-6 flex flex-col">
             <div class="flex justify-between items-center gap-4 mb-4 pb-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
                 <div class="flex items-center gap-4 min-w-0">
                     <div class="fw-badge"><i class="fa-solid fa-calendar-week"></i></div>
@@ -764,8 +861,35 @@
             <div id="fullWeekList" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4 items-start pr-2 my-2"></div>
 
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500"><i class="fa-solid fa-hand-pointer mr-1"></i>Clique num dia para ir até ele, ou em "Abrir" para iniciar o treino.</span>
+                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500"><i class="fa-solid fa-hand-pointer mr-1"></i>Clique num dia para ir até ele, ou em "Abrir" para acompanhar o treino série a série.</span>
                 <button onclick="closeFullWeek()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition active:scale-95">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL TREINO AO VIVO ============ -->
+    <div id="liveSessionModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 sm:p-3">
+        <div class="ls-panel bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-300 dark:border-slate-700 p-4 sm:p-5 flex flex-col">
+            <div class="flex justify-between items-center gap-4 mb-3 pb-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="fw-badge" id="liveBadge"><i class="fa-solid fa-person-running"></i></div>
+                    <div class="min-w-0">
+                        <h3 id="liveTitle" class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white leading-tight truncate">Treino ao vivo</h3>
+                        <p id="liveSubtitle" class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="liveBackToWeek()" class="ls-ghost"><i class="fa-solid fa-calendar-week"></i><span class="hidden sm:inline">Semana</span></button>
+                    <button onclick="closeLiveSession()" class="close-spin text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-slate-700 p-2 rounded-full shadow-sm shrink-0"><span class="close-ico"><svg class="ci-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg class="ci-sh" viewBox="-5 -4 110 110" aria-hidden="true"><g style="fill:var(--sh-fill,#bb0e19)"><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(0 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(120 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(240 50 50)"/><circle cx="50" cy="50" r="17"/></g><g fill="none" style="stroke:var(--sh-ring,#d1202a)" stroke-width="1.6"><circle cx="50" cy="50" r="10"/><circle cx="50" cy="50" r="5.5"/></g><circle cx="50" cy="50" r="2.2" style="fill:var(--sh-ring,#d1202a)"/></svg></span></button>
+                </div>
+            </div>
+            <div id="liveProgress" class="shrink-0 mb-3"></div>
+            <div class="ls-body flex-1 min-h-0">
+                <div id="liveMain" class="ls-scroll min-h-0 overflow-y-auto custom-scrollbar pr-2"></div>
+                <aside class="ls-side min-h-0 flex flex-col">
+                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 shrink-0">Roteiro do dia</p>
+                    <div id="liveRoute" class="ls-scroll flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 space-y-2"></div>
+                </aside>
             </div>
         </div>
     </div>
@@ -2407,7 +2531,7 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             ${today ? '<span class="fw-today">Hoje</span>' : ''}
-                            <button type="button" class="fw-open" onclick="closeFullWeek(); showSlotWorkout('${slot.id}')"><i class="fa-solid fa-play"></i> Abrir</button>
+                            <button type="button" class="fw-open" onclick="openLiveSession('${slot.id}')" title="Acompanhar o treino série a série"><i class="fa-solid fa-play"></i> Abrir</button>
                         </div>
                     </div>
                     ${notesHtml}
@@ -2436,6 +2560,7 @@
                 <div class="fw-stat"><b>${restDays}</b> dia(s) de descanso</div>`;
 
             clearTimeout(fullWeekCloseTimer);
+            lockPageScroll('week');
             const modal = document.getElementById('viewFullWeekModal');
             modal.classList.remove('hidden', 'mdl-closing', 'mdl-open');
             void modal.offsetWidth;
@@ -2448,13 +2573,188 @@
             if (modal.classList.contains('hidden') || modal.classList.contains('mdl-closing')) return;
             modal.classList.remove('mdl-open');
             modal.classList.add('mdl-closing');
-            fullWeekCloseTimer = setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('mdl-closing'); }, 170);
+            fullWeekCloseTimer = setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('mdl-closing'); unlockPageScroll('week'); }, 170);
         }
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
             const m = document.getElementById('viewFullWeekModal');
             if (!m || m.classList.contains('hidden') || m.classList.contains('mdl-closing')) return;
             closeFullWeek();
+        });
+
+        // ============ TRAVA DO SCROLL DA PÁGINA (só a janela aberta rola) ============
+        const _lockOwners = new Set();
+        function lockPageScroll(o) {
+            if (!_lockOwners.size) {
+                const w = window.innerWidth - document.documentElement.clientWidth;
+                document.documentElement.classList.add('scroll-locked'); document.body.classList.add('scroll-locked');
+                if (w > 0) document.body.style.paddingRight = w + 'px';
+            }
+            _lockOwners.add(o);
+        }
+        function unlockPageScroll(o) {
+            _lockOwners.delete(o);
+            if (!_lockOwners.size) { document.documentElement.classList.remove('scroll-locked'); document.body.classList.remove('scroll-locked'); document.body.style.paddingRight = ''; }
+        }
+        document.addEventListener('wheel', e => {
+            if (!_lockOwners.size || e.ctrlKey) return;
+            for (let el = e.target; el && el !== document.body && el.nodeType === 1; el = el.parentElement) {
+                if (el.scrollHeight > el.clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(el).overflowY)) {
+                    if (e.deltaY < 0 ? el.scrollTop > 0 : el.scrollTop + el.clientHeight < el.scrollHeight - 1) return;
+                }
+            }
+            e.preventDefault();
+        }, { passive: false });
+
+        // ============ TREINO AO VIVO (série a série) ============
+        const LIVE_KEY = 'calistenia_session_v1';
+        let liveStore = {};
+        try { liveStore = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (e) { liveStore = {}; }
+        let liveSlotId = null, liveSt = null, liveEx = [], livePop = null, liveCloseTimer = null;
+
+        function parseScheme(text) {
+            const t = String(text || '').replace(/<[^>]*>/g, '').trim();
+            const m = t.match(/(\d+)\s*[x×]\s*(\d+(?:\s*-\s*\d+)?)(?:\s*(min|seg|s)\b)?/i);
+            if (!m) return { sets: 1, target: '', unit: 'reps', note: t };
+            const u = (m[3] || '').toLowerCase();
+            return { sets: Math.max(1, +m[1]), target: m[2].replace(/\s+/g, ''), unit: u ? (u === 'min' ? 'min' : 's') : 'reps',
+                     note: t.slice(m.index + m[0].length).replace(/^[\s,;–-]+/, '').trim() };
+        }
+        function liveTxt(ex) { return ex.variations[currentVariationIndexMap[ex.id] || 0] || ex.variations[0] || ''; }
+        function liveP(ex) { return parseScheme(liveTxt(ex)); }
+        function liveTarget(p) { return !p.target ? (p.note || 'Livre') : p.unit === 'reps' ? `${p.target} ${p.target === '1' ? 'rep' : 'reps'}` : `${p.target} ${p.unit}`; }
+        function liveDone(i) { const ex = liveEx[i]; return (liveSt.sets[ex.id] || 0) >= liveP(ex).sets; }
+        function liveNextIdx(from) { for (let k = 1; k < liveEx.length; k++) { const i = (from + k) % liveEx.length; if (!liveDone(i)) return i; } return -1; }
+        function liveSave() { liveStore[liveSlotId] = liveSt; try { localStorage.setItem(LIVE_KEY, JSON.stringify(liveStore)); } catch (e) {} }
+        function liveMark(exId, on) { const d = getDoneSet(liveSlotId); if (on) d.add(exId); else d.delete(exId); saveDoneSet(liveSlotId, d); }
+
+        function openLiveSession(slotId) {
+            const slot = weeklySlots.find(s => s.id === slotId);
+            if (!slot) return;
+            const list = slotSelectedExercises(slot);
+            if (!list.length) { closeFullWeek(); showSlotWorkout(slotId); return; }
+            liveSlotId = slotId; liveEx = list;
+            const sv = liveStore[slotId], ok = sv && sv.date === todayKey();
+            liveSt = ok ? { date: sv.date, cur: sv.cur, sets: Object.assign({}, sv.sets) } : { date: todayKey(), cur: 0, sets: {} };
+            const dn = getDoneSet(slotId);
+            list.forEach(ex => { if (dn.has(ex.id) && liveSt.sets[ex.id] == null) liveSt.sets[ex.id] = liveP(ex).sets; });
+            if (!ok || liveSt.cur >= list.length) liveSt.cur = list.findIndex((_, i) => !liveDone(i));
+            document.getElementById('liveTitle').textContent = 'Treino ao vivo · ' + slot.title;
+            document.getElementById('liveSubtitle').textContent = `${slotCatsLabel(slot)} · ${list.length} ${list.length === 1 ? 'exercício' : 'exercícios'}`;
+            document.getElementById('liveBadge').style.background = slotGradient(slot);
+            lockPageScroll('live'); closeFullWeek(); renderLive();
+            clearTimeout(liveCloseTimer);
+            const m = document.getElementById('liveSessionModal');
+            m.classList.remove('hidden', 'mdl-closing', 'mdl-open'); void m.offsetWidth; m.classList.add('mdl-open');
+        }
+        function closeLiveSession() {
+            const m = document.getElementById('liveSessionModal');
+            if (m.classList.contains('hidden') || m.classList.contains('mdl-closing')) return;
+            liveTimerReset();
+            m.classList.remove('mdl-open'); m.classList.add('mdl-closing');
+            liveCloseTimer = setTimeout(() => { m.classList.add('hidden'); m.classList.remove('mdl-closing'); unlockPageScroll('live'); }, 170);
+        }
+        function liveBackToWeek() { closeLiveSession(); showFullWeek(); }
+        function liveCompleteSet() {
+            const ex = liveEx[liveSt.cur], p = liveP(ex), n = liveSt.sets[ex.id] || 0;
+            if (n >= p.sets) return;
+            liveSt.sets[ex.id] = n + 1; livePop = ex.id + ':' + n;
+            if (n + 1 >= p.sets) { liveMark(ex.id, true); liveSt.cur = liveNextIdx(liveSt.cur); }
+            liveSave(); renderLive();
+        }
+        function liveUndoSet() {
+            let i = liveSt.cur < 0 ? liveEx.length - 1 : liveSt.cur, ex = liveEx[i], n = liveSt.sets[ex.id] || 0;
+            if (n === 0 && i > 0) { i--; ex = liveEx[i]; n = liveSt.sets[ex.id] || 0; }
+            liveSt.cur = i; liveSt.sets[ex.id] = Math.max(0, n - 1); liveMark(ex.id, false); liveSave(); renderLive();
+        }
+        function liveSkip() { const n = liveNextIdx(liveSt.cur); if (n >= 0) { liveSt.cur = n; liveSave(); renderLive(); } }
+        function liveGoEx(i) { liveSt.cur = i; liveSave(); renderLive(); }
+        function liveGoSet(k) { const ex = liveEx[liveSt.cur]; liveSt.sets[ex.id] = k; liveMark(ex.id, false); liveSave(); renderLive(); }
+        function liveRestart() { liveSt = { date: todayKey(), cur: 0, sets: {} }; saveDoneSet(liveSlotId, new Set()); liveSave(); renderLive(); }
+
+        // ---- Cronômetro regressivo (editável) ----
+        let liveTDur = 60;
+        try { liveTDur = Math.min(5999, Math.max(1, parseInt(localStorage.getItem('calistenia_timer_v1'), 10) || 60)); } catch (e) {}
+        let liveTLeft = liveTDur, liveTRun = false, liveTEnd = 0, liveTInt = null;
+        function liveFmt(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+        function liveTimerHtml() {
+            return `<div class="ls-timer" id="liveTimer"><input id="liveTimerInput" type="text" inputmode="numeric" maxlength="5" value="${liveFmt(liveTLeft)}" title="Clique para editar (mm:ss ou segundos)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()" onchange="liveTimerEdit(this.value)"><button type="button" id="liveTimerBtn" onclick="liveTimerToggle()" title="Iniciar / pausar"><i class="fa-solid ${liveTRun ? 'fa-pause' : 'fa-play'}"></i></button><button type="button" onclick="liveTimerReset()" title="Zerar"><i class="fa-solid fa-rotate-left"></i></button></div>`;
+        }
+        function liveTimerPaint(force) {
+            const i = document.getElementById('liveTimerInput');
+            if (i && (force || document.activeElement !== i)) i.value = liveFmt(liveTLeft);
+            const b = document.querySelector('#liveTimerBtn i');
+            if (b) b.className = 'fa-solid ' + (liveTRun ? 'fa-pause' : 'fa-play');
+        }
+        function liveTimerEdit(v) {
+            const t = String(v).trim(), m = t.match(/^(\d+)\s*[:.,]\s*(\d{1,2})$/);
+            let s = m ? (+m[1] * 60 + +m[2]) : parseInt(t, 10);
+            if (!(s > 0)) s = liveTDur;
+            liveTDur = Math.min(5999, s);
+            try { localStorage.setItem('calistenia_timer_v1', liveTDur); } catch (e) {}
+            liveTimerReset();
+        }
+        function liveTimerReset() { clearInterval(liveTInt); liveTRun = false; liveTLeft = liveTDur; liveTimerPaint(true); }
+        function liveTimerToggle() {
+            if (liveTRun) { clearInterval(liveTInt); liveTRun = false; }
+            else {
+                if (liveTLeft <= 0) liveTLeft = liveTDur;
+                liveTEnd = Date.now() + liveTLeft * 1000; liveTRun = true;
+                liveTInt = setInterval(liveTimerTick, 200);
+            }
+            liveTimerPaint(true);
+        }
+        function liveTimerTick() {
+            liveTLeft = Math.max(0, Math.ceil((liveTEnd - Date.now()) / 1000));
+            liveTimerPaint();
+            if (liveTLeft > 0) return;
+            clearInterval(liveTInt); liveTRun = false; liveTimerPaint(true);
+            if (navigator.vibrate) navigator.vibrate(200);
+            const t = document.getElementById('liveTimer');
+            if (t) { t.classList.remove('done'); void t.offsetWidth; t.classList.add('done'); }
+        }
+
+        function renderLive() {
+            const n = liveEx.length, cur = liveSt.cur, fin = cur < 0;
+            const col = ex => categoryColors[ex.category] || categoryColors.PUSH;
+            let total = 0, done = 0;
+            liveEx.forEach(ex => { const p = liveP(ex); total += p.sets; done += Math.min(liveSt.sets[ex.id] || 0, p.sets); });
+            const pct = Math.round(done / total * 100), nx = fin ? -1 : liveNextIdx(cur);
+            document.getElementById('liveProgress').innerHTML = `<div class="flex items-center gap-4"><div class="shrink-0 text-[11px] font-black text-slate-600 dark:text-slate-300 leading-snug"><div>${fin ? `Exercício ${n} de ${n}` : `Exercício ${cur + 1} de ${n}`}</div><div>Séries ${done} de ${total}</div></div><div class="flex-1 min-w-0 flex items-center gap-2"><div class="flex-1 h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full transition-all duration-500" style="width:${pct}%;background:linear-gradient(90deg,#2563eb,#39ff14)"></div></div><span class="w-10 text-right text-[11px] font-black text-slate-600 dark:text-slate-300">${pct}%</span></div></div>`;
+            let main = '';
+            if (fin) {
+                main = `<div class="ls-hero text-center" style="--c:#16a34a"><div class="p-10"><div class="text-6xl mb-3">🏆</div><h2 class="text-3xl font-black text-slate-800 dark:text-white">Treino concluído!</h2><p class="text-sm font-semibold text-slate-500 mt-2">${total} séries em ${n} exercícios. Bom trabalho!</p><div class="ls-actions justify-center mt-6"><button type="button" class="ls-btn sec" onclick="liveRestart()"><i class="fa-solid fa-rotate-left"></i> Refazer treino</button><button type="button" class="ls-btn" onclick="liveBackToWeek()"><i class="fa-solid fa-calendar-week"></i> Voltar à semana</button></div></div></div>`;
+            } else {
+                const ex = liveEx[cur], p = liveP(ex), c = col(ex), sd = liveSt.sets[ex.id] || 0, cd = sd >= p.sets;
+                const chips = Array.from({ length: p.sets }, (_, k) => `<button type="button" class="ls-chip ${k < sd ? 'done' : k === sd ? 'cur' : ''}${livePop === ex.id + ':' + k ? ' pop' : ''}" ${k < sd ? `onclick="liveGoSet(${k})" title="Voltar para a série ${k + 1}"` : 'disabled'}><span class="n">${k < sd ? '<i class="fa-solid fa-check"></i>' : k + 1}</span><span class="t">${escHtml(liveTarget(p))}</span></button>`).join('');
+                const label = sd + 1 === p.sets ? (nx < 0 ? 'Finalizar treino' : 'Concluir exercício') : `Concluir série ${sd + 1}`;
+                main = `<div class="ls-hero" style="--c:${c.solid}"><div class="ls-top" style="background:${c.grad}"><span class="ls-kicker">Exercício ${cur + 1} de ${n}</span><h2>${escHtml(ex.name)}</h2></div><div class="p-4">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3"><span class="text-xs font-bold ${c.text}">${escHtml(ex.id)} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}<span class="fw-scheme ml-auto">${formatScheme(liveTxt(ex))}</span></div>
+                    <div class="flex flex-wrap gap-2"><div class="ls-box"><small>Série atual</small>${cd ? '<b>✔</b><em>Exercício concluído</em>' : `<b>${sd + 1}</b><span class="of">de ${p.sets}</span>`}</div><div class="ls-box"><small>Meta por série</small><b style="font-size:26px">${escHtml(liveTarget(p))}</b>${p.target && p.note ? `<em>${escHtml(p.note)}</em>` : ''}</div></div>
+                    <div class="ls-sets">${chips}</div>
+                    <div class="ls-actions">${cd ? `<button type="button" class="ls-btn" onclick="liveGoSet(0)"><i class="fa-solid fa-rotate-left"></i> Refazer exercício</button>${nx >= 0 ? `<button type="button" class="ls-btn sec" onclick="liveGoEx(${nx})">Próximo exercício</button>` : ''}` : `<button type="button" class="ls-btn" onclick="liveCompleteSet()"><i class="fa-solid fa-check"></i> ${label}</button><button type="button" class="ls-btn sec" onclick="liveUndoSet()" ${cur === 0 && sd === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i> Voltar</button><button type="button" class="ls-btn sec" onclick="liveSkip()" ${nx < 0 ? 'disabled' : ''}><i class="fa-solid fa-forward"></i> Pular</button>`}<button type="button" class="ls-btn sec" onclick="openDetailModal('${ex.id}')"><i class="fa-solid fa-circle-info"></i> Guia</button>${liveTimerHtml()}</div></div></div>`;
+                const nE = nx >= 0 ? liveEx[nx] : null, pv = cur > 0 ? cur - 1 : -1, pE = pv >= 0 ? liveEx[pv] : null;
+                const prevCard = pE
+                    ? `<button type="button" class="ls-next prev" style="--c:${col(pE).solid}" onclick="liveGoEx(${pv})" title="Voltar para o exercício anterior"><span class="ls-ix">${pv + 1}</span><span class="min-w-0"><small><i class="fa-solid fa-chevron-left"></i>Exercício anterior</small><b>${escHtml(pE.name)}</b><em>${escHtml(pE.id)} · ${catShort(pE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(pE))}</span></button>`
+                    : `<div class="ls-next prev off" style="--c:#94a3b8"><span class="text-2xl">🚩</span><span class="min-w-0"><small>Primeiro exercício</small><b>Início do treino</b></span></div>`;
+                const nextCard = nE
+                    ? `<button type="button" class="ls-next" style="--c:${col(nE).solid}" onclick="liveGoEx(${nx})" title="Ir para o próximo exercício"><span class="ls-ix">${nx + 1}</span><span class="min-w-0"><small>Próximo exercício${nx < cur ? ' (pulado)' : ''}<i class="fa-solid fa-chevron-right"></i></small><b>${escHtml(nE.name)}</b><em>${escHtml(nE.id)} · ${catShort(nE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(nE))}</span></button>`
+                    : `<div class="ls-next" style="cursor:default"><span class="text-2xl">🏁</span><span class="min-w-0"><small>Último exercício</small><b>Ao concluir, o treino termina!</b></span></div>`;
+                main += `<div class="ls-nav">${prevCard}${nextCard}</div>`;
+            }
+            document.getElementById('liveMain').innerHTML = main;
+            const r = document.getElementById('liveRoute'), sc = r.scrollTop;
+            r.innerHTML = liveEx.map((ex, i) => {
+                const p = liveP(ex), s = Math.min(liveSt.sets[ex.id] || 0, p.sets), d = s >= p.sets;
+                return `<button type="button" class="ls-route${i === cur ? ' cur' : ''}${d ? ' done' : ''}${i === nx ? ' nxt' : ''}" style="--c:${col(ex).solid}" onclick="liveGoEx(${i})"><span class="ls-ix">${d ? '<i class="fa-solid fa-check"></i>' : i + 1}</span><span class="min-w-0 text-left flex-1"><b class="block truncate">${escHtml(ex.name)}</b><small>${i === cur ? 'Fazendo agora · ' : i === nx ? 'Próximo · ' : ''}${s}/${p.sets} séries</small></span></button>`;
+            }).join('');
+            r.scrollTop = sc; livePop = null;
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            const m = document.getElementById('liveSessionModal'), d = document.getElementById('detailModal');
+            if (!m || m.classList.contains('hidden') || (d && !d.classList.contains('hidden'))) return;
+            closeLiveSession();
         });
 
         // ============ DROPDOWN PERSONALIZADO (substitui <select> nativo) ============
