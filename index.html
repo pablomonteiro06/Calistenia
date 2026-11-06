@@ -195,27 +195,106 @@
         #workoutBuilderModal.bld-closing { animation: bldBackdropOut .17s ease forwards; pointer-events: none; }
         #workoutBuilderModal.bld-closing .bld-panel { animation: bldPanelOut .17s ease forwards; }
 
-        .bld-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px;
+        .bld-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; padding: 6px 10px; border-radius: 12px; position: relative;
                    border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer; user-select: none; -webkit-user-select: none; outline: none;
                    transition: transform .16s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease; }
         .dark .bld-row { background: #0f172a; border-color: #334155; }
         .bld-row.bld-enter { animation: bldRowIn .35s cubic-bezier(.2,.8,.2,1) backwards; }
-        .bld-row:hover { transform: translateX(4px); border-color: var(--c); background: #f1f5f9; }
+        .bld-row:hover { border-color: var(--c); background: #f1f5f9; }
         .dark .bld-row:hover { background: #162033; }
         .bld-row:active { transform: scale(.985); }
         .bld-row:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,.4); }
         .bld-row.selected { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, #f8fafc); box-shadow: inset 4px 0 0 var(--c); }
         .dark .bld-row.selected { background: color-mix(in srgb, var(--c) 18%, #0f172a); }
         .bld-row.bld-pop { animation: bldPop .28s ease; }
-        .bld-check { width: 20px; height: 20px; border-radius: 7px; border: 2px solid #94a3b8; display: inline-flex; align-items: center; justify-content: center;
+        .bld-check { width: 22px; height: 22px; border-radius: 999px; border: 2px solid #94a3b8; display: inline-flex; align-items: center; justify-content: center;
                      flex-shrink: 0; color: #fff; font-size: 10px; transition: background-color .2s ease, border-color .2s ease; }
         .bld-check i { opacity: 0; transform: scale(.3); transition: opacity .15s ease; }
         .bld-row:hover .bld-check { border-color: var(--c); }
         .bld-row.selected .bld-check { background: var(--c); border-color: var(--c); }
         .bld-row.selected .bld-check i { opacity: 1; animation: bldCheckPop .3s ease forwards; }
-        .bld-name { display: block; font-size: 12px; font-weight: 700; color: #1e293b; }
+        .bld-name { display: block; font-size: 12px; font-weight: 900; line-height: 1.25; color: #1e293b; }
+        .bld-row .level-tag { font-size: 9px; gap: 3px; }
         .dark .bld-name { color: #fff; }
-        .bld-meta { font-size: 10px; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+        .bld-meta { font-size: 11px; font-weight: 900; color: #475569; white-space: nowrap; padding: 2px 8px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; }
+        .dark .bld-meta { color: #e2e8f0; background: #1e293b; border-color: #475569; }
+        /* editor de séries / repetições / combo (só nos exercícios marcados) */
+        .bld-ed { display: none; flex-basis: 100%; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 3px 4px; overflow-x: auto; scrollbar-width: none; padding-left: 28px; padding-right: 24px; margin-top: -1px; cursor: default; }
+        .bld-row.selected { padding-top: 6px; padding-bottom: 6px; }
+        .bld-row.selected .bld-ed { display: flex; }
+        .bld-ed::-webkit-scrollbar { display: none; }
+        .bld-ed { padding-top: 2px; padding-bottom: 2px; margin-top: -3px; margin-bottom: -2px; }   /* espaço para o anel de foco não ser cortado */
+        .bld-ed > *, .bld-ed .bld-ln > * { flex: 0 0 auto; }
+        /* linhas do editor: no Montar Treino achatadas (tudo na mesma linha); no cartão do catálogo e na janela de edição ficam empilhadas */
+        .bld-ln { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 5px; max-width: 100%; }
+        .bld-ln.bld-sep { height: 8px; margin: -1px 0; padding-left: 10px; }
+        .bld-ln.bld-sep .bld-plus { font-size: 12px; line-height: 8px; font-weight: 700; opacity: .55; }
+        .bld-ed .bld-ln, .bld-ed .bld-ln.bld-sep { display: contents; }
+        .bld-ed .bld-ln.bld-sep .bld-plus { font-size: 13px; line-height: 1; font-weight: 900; opacity: .6; }
+        .bld-ed .bld-lbl { width: 44px; min-width: 34px; max-width: 96px; padding: 0 4px; }
+        @supports (field-sizing: content) { .bld-ed .bld-lbl { width: auto; field-sizing: content; } }
+        .bld-ed .bld-csel, .bld-ed .bld-sel.csel-btn { max-width: 168px; }
+        .bld-row.selected .bld-meta { display: none; }
+        .bld-blk { display: inline-flex; align-items: center; gap: 2px; padding: 1px 3px; border-radius: 7px; background: rgba(148,163,184,.15); }
+        .bld-t { font-size: 10px; font-weight: 700; color: #94a3b8; padding-right: 3px; white-space: nowrap; }
+        .bld-plus { font-size: 13px; font-weight: 900; color: var(--c); }
+        .bld-num, .bld-lbl, .bld-sel { height: 21px; border: 0; border-radius: 6px; font-size: 11px; font-weight: 800; color: #1e293b; background: transparent; outline: none; }
+        .dark .bld-num, .dark .bld-lbl, .dark .bld-sel { color: #f1f5f9; }
+        .bld-num { width: 28px; padding: 0; text-align: center; background: rgba(148,163,184,.22); }
+        .bld-lbl { width: 84px; padding: 0 5px; font-weight: 600; }
+        .bld-lbl::placeholder { color: #94a3b8; font-weight: 500; }
+        .bld-lbl { background: rgba(71,85,105,.16); }
+        .dark .bld-lbl { background: rgba(2,6,23,.34); }
+        .bld-num:focus, .bld-lbl:focus, .bld-sel:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 55%, transparent); }
+        .bld-sel { flex: 0 0 auto; width: auto; max-width: 190px; padding: 0 6px; cursor: pointer; background: rgba(148,163,184,.15); color-scheme: light; }
+        .dark .bld-sel { color-scheme: dark; }
+        .bld-csel { display: inline-block; }
+        .bld-sel.csel-btn { height: 21px; padding: 0 6px; gap: 6px; width: auto; max-width: 190px; font-size: 11px; font-weight: 800; }
+        .bld-sel .csel-chev { font-size: 8px; }
+        .bld-u, .bld-rm, .bld-add { border: 0; background: transparent; cursor: pointer; font-weight: 800; line-height: 1; transition: background-color .15s ease, color .15s ease; }
+        .bld-u { font-size: 10px; padding: 3px 5px; border-radius: 6px; color: var(--c); }
+        .bld-u:hover { background: color-mix(in srgb, var(--c) 16%, transparent); }
+        .bld-rm { width: 18px; height: 18px; border-radius: 50%; font-size: 13px; color: #94a3b8; }
+        .bld-rm:hover { background: #ef4444; color: #fff; }
+        /* combo: só um ícone minimalista no canto superior direito da linha */
+        .bld-add { position: absolute; top: 6px; right: 8px; width: 20px; height: 20px; padding: 0; border-radius: 50%; font-size: 10px; color: #94a3b8; display: inline-flex; align-items: center; justify-content: center; }
+        .bld-add:hover { color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+        /* catálogo (editar exercício): progressões com séries × reps/seg + combo, como no Montar Treino */
+        .vr-row { --c: #2563eb; display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; padding: 6px 8px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; }
+        .dark .vr-row { background: #0f172a; border-color: #475569; }
+        .vr-pre { width: 118px; height: 24px; padding: 0 8px; border: 0; border-radius: 6px; font-size: 11px; font-weight: 800; color: #1e293b; background: rgba(148,163,184,.22); outline: none; }
+        .dark .vr-pre { color: #f1f5f9; }
+        .vr-pre::placeholder { color: #94a3b8; font-weight: 600; }
+        .vr-pre:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 55%, transparent); }
+        .vr-ed { display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 3px; flex: 1 1 auto; min-width: 0; }
+        .vr-ico, .vr-del { width: 22px; height: 22px; border: 0; border-radius: 50%; background: transparent; color: #94a3b8; font-size: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background-color .15s ease, color .15s ease; }
+        .vr-ico:hover { color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+        .vr-del { margin-left: auto; }
+        .cat-ed { display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; justify-content: center; gap: 3px; padding: 8px; }
+        .cat-ed .bld-csel { flex: 1 1 100%; display: block; }
+        .cat-ed .bld-sel.csel-btn { width: 100%; max-width: none; height: 24px; }
+        .cat-ed .bld-sel .csel-label { flex: 1; }
+        .cat-ed .bld-lbl { width: 72px; }
+        .vr-del:hover { color: #fff; background: #ef4444; }
+
+        /* catálogo: contador de níveis + etiqueta de nível que abre a lista de progressões */
+        .cat-lvl-wrap { position: relative; display: inline-flex; }
+        .cat-lvl-btn { display: inline-flex; align-items: center; gap: 6px; padding: 2px 6px; border-radius: 8px; border: 1px solid transparent; background: rgba(148,163,184,.14); cursor: pointer; outline: none; transition: border-color .15s ease, background-color .15s ease; }
+        .cat-lvl-btn:hover, .cat-lvl-btn[aria-expanded="true"] { border-color: #94a3b8; background: rgba(148,163,184,.22); }
+        .cat-lvl-btn:focus-visible { box-shadow: 0 0 0 2px rgba(37,99,235,.45); }
+        .cat-lvl-cnt { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 900; color: #15803d; }
+        .dark .cat-lvl-cnt { color: #39ff14; }
+        .cat-lvl-chev { font-size: 8px; color: #94a3b8; transition: transform .2s ease; }
+        .cat-lvl-btn[aria-expanded="true"] .cat-lvl-chev { transform: rotate(180deg); }
+        .cat-lvl-menu { position: fixed; z-index: 90; min-width: 190px; max-width: calc(100vw - 16px); padding: 4px; border-radius: 12px; border: 1px solid #cbd5e1; background: #fff; box-shadow: 0 14px 28px -10px rgba(15,23,42,.45); }
+        .dark .cat-lvl-menu { background: #0f172a; border-color: #475569; }
+        .cat-lvl-item { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; padding: 5px 8px; border: 0; border-radius: 8px; background: transparent; font-size: 11px; font-weight: 800; color: #334155; cursor: pointer; white-space: nowrap; outline: none; }
+        .dark .cat-lvl-item { color: #cbd5e1; }
+        .cat-lvl-item:hover, .cat-lvl-item:focus-visible { background: rgba(148,163,184,.2); }
+        .cat-lvl-item .nm { font-weight: 700; opacity: .85; }
+        .cat-lvl-item .sc { margin-left: auto; font-weight: 900; }
+        .cat-lvl-item.on { background: rgba(57,255,20,.13); color: #15803d; }
+        .dark .cat-lvl-item.on { color: #39ff14; }
         .bld-mark { background: rgba(250,204,21,.4); color: inherit; border-radius: 3px; padding: 0 1px; }
         .bld-bump { animation: bldBump .3s ease; }
         .bld-empty { text-align: center; padding: 34px 10px; color: #94a3b8; font-size: 12px; font-weight: 600; }
@@ -334,7 +413,7 @@
         .fw-num { width: 24px; height: 24px; border-radius: 8px; background: var(--c); color: #fff; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .fw-name { display: block; font-size: 12px; font-weight: 800; color: #1e293b; }
         .dark .fw-name { color: #fff; }
-        .fw-scheme { padding: 4px 10px; border-radius: 10px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 900; flex-shrink: 0; transition: transform .15s ease; }
+        .fw-scheme { padding: 4px 10px; border-radius: 10px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 900; flex-shrink: 0; max-width: 58%; text-align: right; transition: transform .15s ease; }
         .dark .fw-scheme { background: #1e293b; border-color: #475569; }
         .fw-row:hover .fw-scheme { transform: scale(1.06); }
         .fw-empty { padding: 18px 16px; font-size: 12px; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
@@ -383,6 +462,13 @@
         .ls-box b { display: inline-block; font-size: 34px; font-weight: 900; line-height: 1.1; color: var(--c); }
         .ls-box .of { font-size: 16px; font-weight: 800; color: #64748b; margin-left: 6px; }
         .ls-box em { display: block; font-size: 11px; font-weight: 700; font-style: normal; color: #64748b; }
+        .ls-box.combo { flex: 3 1 260px; }
+        .ls-combo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 3px; }
+        .ls-step { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px 4px 5px; border-radius: 12px; background: color-mix(in srgb, var(--c) 10%, transparent); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); }
+        .ls-step .k { width: 18px; height: 18px; border-radius: 50%; background: var(--c); color: #fff; font-size: 10px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .ls-step .v { font-size: 20px; font-weight: 900; line-height: 1.1; color: var(--c); white-space: nowrap; }
+        .ls-step .l { font-size: 11px; font-weight: 700; color: #64748b; }
+        .ls-arr { font-size: 15px; font-weight: 900; color: #94a3b8; }
         .ls-sets { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
         .ls-chip { flex: 1 1 64px; max-width: 120px; padding: 7px 6px; border-radius: 14px; border: 2px solid #cbd5e1; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 3px; color: #94a3b8; font-weight: 900; outline: none; }
         .dark .ls-chip { background: #1e293b; border-color: #475569; }
@@ -543,8 +629,8 @@
         .slot-chip:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,.35); }
         .slot-chip.on, .dark .slot-chip.on { background: var(--c); border-color: var(--c); color:#fff; box-shadow: 0 8px 14px -8px var(--c); }
         .slot-row { display:flex; align-items:center; gap:8px; font-size:11px; padding:5px 6px; border-radius:9px; transition: background-color .15s ease, transform .15s ease; }
-        .slot-row.clickable { cursor:pointer; }
-        .slot-row.clickable:hover { background: rgba(100,116,139,.16); transform: translateX(2px); }
+                .slot-row.hov { cursor:default; }
+        .slot-row.hov:hover { background: rgba(100,116,139,.16); transform: translateX(2px); }
 
         /* === MOSTRAR TREINO: CARTÕES INTERATIVOS === */
         .wk-card { cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, border-color .2s ease, opacity .2s ease; }
@@ -564,13 +650,26 @@
         .wk-chev.rot { transform: rotate(180deg); }
         .wk-expand { animation: wkFade .25s ease backwards; }
         @keyframes wkFade { from { opacity:0; transform: translateY(-4px); } to { opacity:1; transform:none; } }
-        .wk-var { font-size:11px; font-weight:700; padding:6px 10px; border-radius:10px; border:1px solid #cbd5e1; background:#fff; color:#475569; cursor:pointer; text-align:left; outline:none;
-                  transition: transform .15s ease, border-color .2s ease, background-color .2s ease; }
-        .dark .wk-var { background:#1e293b; border-color:#475569; color:#cbd5e1; }
-        .wk-var:hover { border-color:#2563eb; transform: scale(1.04); }
-        .wk-var.on, .dark .wk-var.on { background:#39ff14; border-color:#39ff14; color:#0f172a; }
-        .wk-guide { font-size:11px; font-weight:800; color:#2563eb; display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:10px; cursor:pointer; outline:none; transition: background-color .2s ease, transform .15s ease; }
-        .wk-guide:hover { background: rgba(37,99,235,.12); transform: scale(1.04); }
+        /* níveis: chips discretos em linha, sem preenchimento forte */
+        .wk-vars { display:flex; flex-wrap:nowrap; align-items:center; gap:2px 3px; overflow-x:auto; scrollbar-width:none; }
+        .wk-vars::-webkit-scrollbar { display:none; }
+        .wk-vars > * { flex:0 0 auto; }
+        .wk-sch { white-space:nowrap; overflow-x:auto; scrollbar-width:none; }
+        .wk-sch::-webkit-scrollbar { display:none; }
+        .wk-var { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; border-radius:999px; border:1px solid transparent; background:transparent; font-size:10px; font-weight:800; color:#64748b; cursor:pointer; outline:none; line-height:1.5; white-space:nowrap;
+                  transition: border-color .2s ease, background-color .2s ease, color .2s ease; }
+        .dark .wk-var { color:#94a3b8; }
+        .wk-var:hover { border-color:#94a3b8; }
+        .wk-var .n { font-weight:700; }
+        .wk-var .n::after { content:'·'; margin-left:4px; opacity:.5; }
+        .wk-var .s { font-weight:900; }
+        .wk-var.on { background:rgba(57,255,20,.13); border-color:rgba(57,255,20,.5); color:#15803d; }
+        .dark .wk-var.on { color:#39ff14; }
+        .wk-var.static { cursor:default; }
+        .wk-var.static:hover { border-color:rgba(57,255,20,.5); }
+        .wk-expand { position:relative; min-height:18px; padding-right:22px; }
+        .wk-guide-ic { position:absolute; top:0; right:0; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8; cursor:pointer; outline:none; transition: color .2s ease, background-color .2s ease; }
+        .wk-guide-ic:hover, .wk-guide-ic:focus-visible { color:#2563eb; background: rgba(37,99,235,.12); }
         @media (prefers-reduced-motion: reduce) { .slot-enter, .slot-pop, .wk-expand { animation: none; } .slot-card, .cat-btn, .cat-btn::after, .cat-ico, .slot-chip, .wk-card { transition: none; } }
 
         /* === LOGO: mãos enfaixadas (título) + yin-yang (tema) === */
@@ -588,16 +687,16 @@
                   -webkit-mask: var(--hands-mask) center / 100% 100% no-repeat; mask: var(--hands-mask) center / 100% 100% no-repeat; }
 
         /* === BOTÃO DE TEMA: Yin e Yang; gira sem parar e, ao clicar, dá um giro e alterna claro/escuro === */
-        .theme-spin { --yy-dark: #0f172a; --yy-light: #ffffff; --yy-halo: rgba(15,23,42,.55); --yy-halo-soft: rgba(15,23,42,.35); position: relative; outline: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+        .theme-spin { width: 34px; height: 34px; --yy-dark: #0f172a; --yy-light: #ffffff; --yy-halo: rgba(15,23,42,.55); --yy-halo-soft: rgba(15,23,42,.35); position: relative; outline: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
                       transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, background-color .2s ease; border: 0; background: transparent; }
         .theme-spin:active { transform: scale(.92); }
         .theme-spin:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,.45); }
-        .theme-ico { position: relative; display: block; width: 24px; height: 24px; }
+        .theme-ico { position: relative; display: block; width: 100%; height: 100%; }
         .theme-ico svg { position: absolute; top: 0; left: 0; inset: 0; width: 100%; height: 100%; display: block; opacity: 1; overflow: visible; transform-origin: 50% 50%;
                          transition: transform .6s cubic-bezier(.2,.8,.2,1), filter .3s ease; }
         /* tema escuro: o halo do hover passa a ser claro */
         .dark .theme-spin { --yy-dark: #020617; --yy-light: #f8fafc; --yy-halo: rgba(248,250,252,.6); --yy-halo-soft: rgba(248,250,252,.4); }
-        .ti-yy { transform: scale(1.15); }
+        .ti-yy { transform: scale(1); }
         /* giro contínuo no próprio ícone; hover e clique somam seus efeitos por cima */
         .theme-ico { animation: yyIdle 7s linear infinite; }
         .theme-spin:hover .theme-ico { animation-duration: 2.2s; }
@@ -605,14 +704,14 @@
         @keyframes yyIdle { to { transform: rotate(360deg); } }
         @media (hover: hover) {
             .theme-spin:hover { transform: scale(1.1); box-shadow: 0 0 16px 2px var(--yy-halo); }
-            .theme-spin:hover .ti-yy { transform: rotate(360deg) scale(1.3); }
+            .theme-spin:hover .ti-yy { transform: rotate(360deg) scale(1); }
         }
         /* Ao clicar: o Yin e Yang dá um giro e o tema muda no meio dele */
         .theme-spin.switching .ti-yy { animation: yyTurn .9s cubic-bezier(.4,.1,.2,1); }
         @keyframes yyTurn {
-            0%   { transform: rotate(0) scale(1.15); }
+            0%   { transform: rotate(0) scale(1); }
             35%  { transform: rotate(300deg) scale(.5); }
-            100% { transform: rotate(720deg) scale(1.15); }
+            100% { transform: rotate(720deg) scale(1); }
         }
 
         /* === FUNDO: silhuetas da progressão de calistenia, coladas na parte inferior ===
@@ -634,7 +733,7 @@
             .hdr-nav > button:not(.theme-spin) { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
             .hdr-nav > div { flex: 2 1 0; min-width: 0; }
             .hdr-nav > div button { flex: 1 1 0; justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
-            .hdr-nav .theme-spin { width: 40px; flex: none; }
+            .hdr-nav .theme-spin { width: 34px; height: 34px; flex: none; }
             /* semana: 2 dias por linha */
             #weeklyGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
             .slot-card { border-radius: 14px; }
@@ -688,7 +787,215 @@
         @media (min-width: 640px) and (max-width: 719px) {
             .cat-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
         }
-    </style>
+
+        /* === CELULAR NA VERTICAL: janelas sem sobreposição, tudo alinhado === */
+        @media (max-width: 639px) {
+            html, body { overflow-x: hidden; }
+            .fixed.inset-0.z-\[200\], .fixed.inset-0.z-\[300\] { padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) !important; }
+            #viewWorkoutModal > div, #exportModal > div, #importModal > div, #workoutBuilderModal > div, #detailModal > div, #editModal > div, #pdfPreviewModal > div {
+                padding: 14px !important; border-radius: 20px !important; max-height: calc(100dvh - 16px) !important; max-width: 100% !important; }
+            #viewFullWeekModal .fw-panel { padding: 14px !important; border-radius: 20px !important; }
+            #liveSessionModal .ls-panel { padding: 12px !important; border-radius: 20px !important; }
+            #viewWorkoutModal h3, #workoutBuilderModal h3, #detailModal h3, #editModal h3, #viewFullWeekModal h3 { font-size: 19px !important; line-height: 1.2; overflow-wrap: anywhere; }
+            #viewFullWeekModal .fw-badge, #liveSessionModal .fw-badge { width: 38px; height: 38px; border-radius: 13px; font-size: 16px; flex-shrink: 0; }
+            #viewFullWeekModal .fw-panel > div:first-child > div:first-child { gap: 10px !important; }
+            #viewWorkoutModal .shrink-0.border-b, #workoutBuilderModal .shrink-0.border-b, #detailModal > div > div:first-child, #editModal > div > div:first-child { gap: 10px; margin-bottom: 10px !important; padding-bottom: 10px !important; }
+            #viewWorkoutModal .shrink-0.border-b > div:first-child, #workoutBuilderModal .shrink-0.border-b > div:first-child, #detailModal > div > div:first-child > div:first-child { min-width: 0; flex: 1 1 auto; }
+            #viewWorkoutModal .shrink-0.border-b > button, #workoutBuilderModal .shrink-0.border-b > button, #detailModal > div > div:first-child > button, #editModal > div > div:first-child > button { flex-shrink: 0; }
+            #detailModal .md\:w-64 { width: 100%; }
+            #detailModal .flex-1.flex.flex-col { min-height: 0; }
+            /* lista de Exercícios do dia: nome, nível e esquema sem se sobrepor */
+            .wk-card .wk-row { flex-wrap: wrap; row-gap: 3px; }
+            .wk-card .wk-l { flex: 1 1 150px; min-width: 0; }
+            .wk-card .wk-nm { flex: 1 1 auto; min-width: 0; }
+            .wk-card .wk-tags { overflow: hidden; max-width: 100%; }
+            .wk-card .wk-r { margin-left: auto; max-width: 100%; min-width: 0; }
+            .wk-card .wk-sch { max-width: calc(100vw - 110px) !important; }
+            .wk-card .wk-vars { max-width: 100%; }
+            /* Montar Treino: cabeçalho da linha sem corte */
+            .bld-row { padding-left: 8px; padding-right: 8px; }
+            .bld-row .bld-name { overflow-wrap: anywhere; }
+            .bld-ed { padding-left: 24px; padding-right: 22px; }
+            /* cartão do catálogo (3 por linha): etiqueta de nível e editor cabem na largura */
+            #exercisesGrid .cat-lvl-wrap { max-width: 100%; }
+            #exercisesGrid .cat-lvl-btn { max-width: 100%; flex-wrap: wrap; gap: 1px 4px; padding: 1px 4px; }
+            #exercisesGrid .cat-lvl-btn .level-tag { font-size: 8px; gap: 2px; white-space: normal; flex-wrap: wrap; }
+            #exercisesGrid .cat-lvl-cnt { font-size: 9px; }
+            #exercisesGrid .cat-lvl-chev { display: none; }
+            #exercisesGrid .cat-ed { padding: 5px; align-items: stretch; overflow: hidden; }
+            #exercisesGrid .cat-ed .bld-ln { gap: 2px 3px; width: 100%; max-width: 100%; }
+            #exercisesGrid .cat-ed .bld-blk { flex-wrap: wrap; max-width: 100%; min-width: 0; }
+            #exercisesGrid .cat-ed .bld-lbl { width: 100%; min-width: 0; flex: 1 1 100%; }
+            #exercisesGrid .cat-ed .bld-t { font-size: 9px; padding-right: 1px; }
+            #exercisesGrid .cat-ed .vr-ico { width: 18px; height: 18px; margin-left: auto; }
+            /* edição do exercício: progressões empilhadas e dentro da tela */
+            .vr-row { padding: 6px; }
+            .vr-pre { width: 100%; }
+            .vr-ed { flex: 1 1 100%; }
+            /* semana completa e treino ao vivo */
+            #fullWeekList { gap: 10px; padding-right: 0 !important; }
+            #fullWeekStats { gap: 6px; }
+            #liveSessionModal .ls-top { padding: 9px 12px; }
+            #liveSessionModal .ls-box { flex: 1 1 100%; }
+            #liveSessionModal .ls-box.combo { flex: 1 1 100%; }
+            #liveSessionModal .ls-step .v { font-size: 17px; }
+            #liveSessionModal .ls-actions > * { flex: 1 1 auto; justify-content: center; }
+            #liveSessionModal #liveProgress > div { flex-wrap: wrap; row-gap: 4px; }
+        }
+
+        /* === CATÁLOGO: cartões com cor mais forte + reps/segundos bem visíveis === */
+        .ex-card { --c: #2563eb;
+                   background: color-mix(in srgb, var(--c) 16%, #ffffff);
+                   border: 1.5px solid color-mix(in srgb, var(--c) 60%, #ffffff); }
+        .dark .ex-card { background: color-mix(in srgb, var(--c) 26%, #0f172a);
+                         border-color: color-mix(in srgb, var(--c) 65%, #0f172a); }
+        .ex-card h4 { color: #0f172a; }
+        .dark .ex-card h4 { color: #ffffff; }
+        .ex-card .text-slate-400 { color: #475569; }
+        .dark .ex-card .text-slate-400 { color: #cbd5e1; }
+        .ex-lbl { color: color-mix(in srgb, var(--c) 80%, #000000); }
+        .dark .ex-lbl { color: color-mix(in srgb, var(--c) 55%, #ffffff); }
+        .ex-prog { background: color-mix(in srgb, var(--c) 32%, #ffffff);
+                   border: 1.5px solid color-mix(in srgb, var(--c) 70%, #ffffff); }
+        .dark .ex-prog { background: color-mix(in srgb, var(--c) 38%, #0f172a);
+                         border-color: color-mix(in srgb, var(--c) 70%, #0f172a); }
+        .ex-card .cat-ed { background: transparent; border-right: 1.5px solid color-mix(in srgb, var(--c) 55%, transparent); }
+        .ex-prog-side { background: color-mix(in srgb, var(--c) 48%, #ffffff); }
+        .dark .ex-prog-side { background: color-mix(in srgb, var(--c) 52%, #0f172a); }
+        .ex-prog-side button { color: color-mix(in srgb, var(--c) 40%, #000000); }
+        .dark .ex-prog-side button { color: #ffffff; }
+        .ex-prog-side button:first-child { border-bottom: 1.5px solid color-mix(in srgb, var(--c) 55%, transparent); }
+        .ex-card .cat-lvl-btn { background: color-mix(in srgb, var(--c) 18%, #ffffff); }
+        .dark .ex-card .cat-lvl-btn { background: color-mix(in srgb, var(--c) 30%, #0f172a); }
+
+        /* séries / reps / segundos nos editores */
+        .bld-blk { background: rgba(255,255,255,.55); }
+        .dark .bld-blk { background: rgba(2,6,23,.45); }
+        .bld-t { color: #334155; font-weight: 800; }
+        .dark .bld-t { color: #e2e8f0; }
+        .bld-ln.bld-sep .bld-plus, .bld-ed .bld-ln.bld-sep .bld-plus { opacity: 1; }
+        .bld-num.n-sets { background: #1d4ed8; color: #ffffff; }
+        .bld-num.n-r    { background: #c2410c; color: #ffffff; }
+        .bld-num.n-s    { background: #047857; color: #ffffff; }
+        .dark .bld-num.n-sets { background: #60a5fa; color: #0b1b3a; }
+        .dark .bld-num.n-r    { background: #fb923c; color: #1c0a00; }
+        .dark .bld-num.n-s    { background: #34d399; color: #022c22; }
+        .bld-u { font-size: 11px; font-weight: 900; padding: 3px 7px; }
+        .bld-u.u-r { color: #c2410c; background: rgba(194,65,12,.14); }
+        .bld-u.u-s { color: #047857; background: rgba(4,120,87,.14); }
+        .dark .bld-u.u-r { color: #fdba74; background: rgba(251,146,60,.2); }
+        .dark .bld-u.u-s { color: #6ee7b7; background: rgba(52,211,153,.2); }
+        .bld-u.u-r:hover, .bld-u.u-s:hover { filter: brightness(1.15); }
+
+        /* esquemas "3×10" / "30s" em todo o app: tons mais fortes no claro, vivos no escuro */
+        .sc-sets, .sc-reps, .sc-secs { font-weight: 900; }
+        .sc-sets { color: #1d4ed8; } .sc-reps { color: #c2410c; } .sc-secs { color: #047857; }
+        .dark .sc-sets { color: #39ff14; } .dark .sc-reps { color: #fb923c; } .dark .sc-secs { color: #34d399; }
+
+        /* === Selo da categoria e contorno do nível na cor da categoria === */
+        .ex-badge { color: color-mix(in srgb, var(--c) 62%, #000000);
+                    background: color-mix(in srgb, var(--c) 34%, #ffffff);
+                    border: 2px solid var(--c); }
+        .dark .ex-badge { color: color-mix(in srgb, var(--c) 30%, #ffffff);
+                          background: color-mix(in srgb, var(--c) 48%, #0f172a);
+                          border-color: color-mix(in srgb, var(--c) 85%, #ffffff); }
+        .ex-card .cat-lvl-btn, .ex-card .cat-lvl-static { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 8px;
+                    border: 1.5px solid var(--c); background: color-mix(in srgb, var(--c) 16%, #ffffff); }
+        .dark .ex-card .cat-lvl-btn, .dark .ex-card .cat-lvl-static { border-color: color-mix(in srgb, var(--c) 85%, #ffffff); background: color-mix(in srgb, var(--c) 30%, #0f172a); }
+        .ex-card .cat-lvl-btn:hover, .ex-card .cat-lvl-btn[aria-expanded="true"] { border-color: var(--c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 35%, transparent); }
+
+        /* === Botão de nível: interior mais escuro na tonalidade da categoria (cores dos níveis mantidas) === */
+        .ex-card .cat-lvl-btn, .ex-card .cat-lvl-static { background: color-mix(in srgb, var(--c) 42%, #020617); box-shadow: inset 0 1px 3px rgba(0,0,0,.35); }
+        .dark .ex-card .cat-lvl-btn, .dark .ex-card .cat-lvl-static { background: color-mix(in srgb, var(--c) 26%, #020617); }
+        .ex-card .cat-lvl-btn:hover, .ex-card .cat-lvl-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--c) 52%, #020617); }
+        .dark .ex-card .cat-lvl-btn:hover, .dark .ex-card .cat-lvl-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--c) 34%, #020617); }
+        .ex-card .cat-lvl-btn .level-tag, .ex-card .cat-lvl-static .level-tag { filter: brightness(1.3) saturate(1.1); }
+        .ex-card .cat-lvl-cnt, .dark .ex-card .cat-lvl-cnt { color: #4ade80; }
+        .ex-card .cat-lvl-chev { color: #e2e8f0; }
+
+        /* === Editar / apagar discretos: aparecem ao passar o mouse sobre séries e repetições === */
+        .ex-prog-side { background: transparent !important; width: 2rem; }
+        .ex-card .cat-ed { border-right: 0; }
+        .ex-act { flex: 1; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; cursor: pointer;
+                  color: color-mix(in srgb, var(--c) 55%, #000000); opacity: 0; transform: translateX(4px);
+                  transition: opacity .2s ease, transform .2s ease, background-color .2s ease, color .2s ease; }
+        .dark .ex-act { color: #e2e8f0; }
+        .ex-prog:hover .ex-act, .ex-prog:focus-within .ex-act { opacity: .6; transform: none; }
+        .ex-prog .ex-act:hover, .ex-prog .ex-act:focus-visible { opacity: 1; outline: none; }
+        .ex-act-edit { border-top-right-radius: 11px; }
+        .ex-act-del  { border-bottom-right-radius: 11px; }
+        .ex-act-edit:hover, .ex-act-edit:focus-visible { background: color-mix(in srgb, var(--c) 28%, transparent); }
+        .ex-act-del:hover,  .ex-act-del:focus-visible  { background: rgba(239,68,68,.22); color: #dc2626; }
+        .dark .ex-act-del:hover, .dark .ex-act-del:focus-visible { color: #fca5a5; }
+        @media (hover: none) { .ex-act { opacity: .5; transform: none; } }
+
+        /* lápis: escreve (balança e risca) */
+        .pen-ico { transform-box: view-box; transform-origin: 4px 20px; }
+        .ex-act-edit:hover .pen-ico, .ex-act-edit:focus-visible .pen-ico { animation: penWrite .7s ease-in-out infinite; }
+        @keyframes penWrite {
+            0%   { transform: translate(0,0) rotate(0); }
+            20%  { transform: translate(-1.5px,1px) rotate(-8deg); }
+            40%  { transform: translate(1.5px,-.5px) rotate(6deg); }
+            60%  { transform: translate(-1px,1px) rotate(-6deg); }
+            80%  { transform: translate(1px,0) rotate(4deg); }
+            100% { transform: translate(0,0) rotate(0); }
+        }
+        /* lixeira: a tampa abre */
+        .bin-lid { transform-box: view-box; transform-origin: 4px 6px; transition: transform .28s cubic-bezier(.3,1.6,.5,1); }
+        .bin-body { transition: transform .2s ease; }
+        .ex-act-del:hover .bin-lid, .ex-act-del:focus-visible .bin-lid { transform: translate(-1px,-2.5px) rotate(-28deg); }
+        .ex-act-del:hover .bin-body, .ex-act-del:focus-visible .bin-body { animation: binShake .5s ease .15s; }
+        @keyframes binShake { 0%,100% { transform: none; } 30% { transform: rotate(-3deg); } 60% { transform: rotate(3deg); } }
+        @media (prefers-reduced-motion: reduce) { .ex-act-edit:hover .pen-ico, .ex-act-del:hover .bin-body { animation: none; } .bin-lid { transition: none; } }
+    
+        /* botão de adicionar repetição: sinal de + dentro de um círculo (menor) */
+        .bld-add, .vr-add { border: 1.5px solid currentColor !important; color: #64748b; font-size: 7px; width: 15px !important; height: 15px !important; padding: 0; }
+        #exercisesGrid .cat-ed .vr-add { width: 15px !important; height: 15px !important; }
+        .dark .bld-add, .dark .vr-add { color: #cbd5e1; }
+        /* hover só na borda circular: o + fica parado e centralizado */
+        .bld-add, .vr-add { transition: border-color .18s ease, box-shadow .18s ease, color .18s ease; }
+        .bld-add:hover, .vr-add:hover { transform: none; color: var(--c) !important; background: transparent !important; border-color: var(--c) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 28%, transparent), inset 0 0 0 1px var(--c); }
+        .bld-add:active, .vr-add:active { box-shadow: 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent), inset 0 0 0 1px var(--c); }
+        .bld-add:focus-visible, .vr-add:focus-visible { outline: none; border-color: var(--c) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 35%, transparent); }
+        /* "+" entre as linhas do combo: verde floresta no claro, verde neon no escuro */
+        .bld-ln.bld-sep .bld-plus, .bld-ed .bld-ln.bld-sep .bld-plus { color: #15803d !important; opacity: 1; font-weight: 900; }
+        .dark .bld-ln.bld-sep .bld-plus, .dark .bld-ed .bld-ln.bld-sep .bld-plus { color: #39ff14 !important; text-shadow: 0 0 6px rgba(57,255,20,.55); }
+        /* + perfeitamente centralizado dentro do círculo */
+        .bld-add, .vr-add { display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; }
+        .bld-add i, .vr-add i { display: block; width: 1em; height: 1em; line-height: 1em; text-align: center; margin: 0; padding: 0; font-size: inherit; }
+        .bld-add i::before, .vr-add i::before { display: block; line-height: 1em; width: 1em; height: 1em; text-align: center; }
+        /* reps / segundos (número e botão): leve aumento ao passar o mouse */
+        .bld-u, .bld-num.n-r, .bld-num.n-s { transition: transform .15s ease, filter .15s ease, background-color .15s ease; }
+        .bld-u:hover, .bld-num.n-r:hover, .bld-num.n-s:hover { transform: scale(1.12); }
+        .bld-u, .bld-num { transform-origin: center; will-change: transform; }
+        /* reps / segundos exibidos nos esquemas (ex.: 12s, 10 reps) */
+        .sc-reps, .sc-secs { display: inline-block; transform-origin: center; transition: transform .15s ease; cursor: default; }
+        .sc-reps:hover, .sc-secs:hover { transform: scale(1.12); }
+        .bld-u:hover { filter: brightness(1.12); box-shadow: none; }
+        .bld-u:active { transform: scale(.97); }
+        .bld-u:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+        .bld-u.u-r:hover { background: rgba(194,65,12,.28); }
+        .bld-u.u-s:hover { background: rgba(4,120,87,.28); }
+        .dark .bld-u.u-r:hover { background: rgba(251,146,60,.38); }
+        .dark .bld-u.u-s:hover { background: rgba(52,211,153,.38); }
+        /* barra vertical fina entre o número e "reps"/"seg" */
+        .bld-u { position: relative; margin-left: 4px; }
+        .bld-u::before { content: ""; position: absolute; left: -4px; top: 50%; width: 1.5px; height: 14px; transform: translateY(-50%); background: currentColor; opacity: .4; border-radius: 1px; pointer-events: none; }
+        /* hover em qualquer um dos dois (número ou reps/seg) anima os dois ao mesmo tempo */
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-num.n-r,
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-num.n-s,
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u { transform: scale(1.12); }
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u { filter: brightness(1.12); }
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u.u-r { background: rgba(194,65,12,.28); }
+        .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u.u-s { background: rgba(4,120,87,.28); }
+        .dark .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u.u-r { background: rgba(251,146,60,.38); }
+        .dark .bld-blk:has(.bld-num.n-r:hover, .bld-num.n-s:hover, .bld-u:hover) > .bld-u.u-s { background: rgba(52,211,153,.38); }
+        /* X do texto: fica vermelho e gira ao passar o mouse, sem círculo de fundo */
+        .bld-rm { transition: color .18s ease, transform .22s ease; }
+        .bld-rm:hover { background: transparent !important; color: #ef4444 !important; transform: rotate(90deg); }
+        .dark .bld-rm:hover { color: #f87171 !important; }
+        @media (prefers-reduced-motion: reduce) { .bld-u, .bld-num, .bld-add, .vr-add { transition: none; } }
+</style>
 </head>
 <body class="bg-slate-300 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen font-sans transition-colors duration-300">
     <div class="bg-silhouettes" aria-hidden="true"></div>
@@ -704,25 +1011,25 @@
             </div>
 
             <nav class="hdr-nav flex flex-wrap items-center gap-2 lg:justify-end" aria-label="Ações principais">
-                <button onclick="openTimer()" aria-label="Cronómetro" title="Cronómetro" class="h-10 flex items-center gap-2 bg-brand-pull hover:bg-purple-600 text-white px-4 rounded-xl text-sm font-black uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30">
+                <button onclick="openTimer()" aria-label="Cronómetro" class="h-10 flex items-center gap-2 bg-brand-pull hover:bg-purple-600 text-white px-4 rounded-xl text-sm font-black uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30">
                     <i class="fa-solid fa-stopwatch"></i><span class="lbl">Cronómetro</span>
                 </button>
 
                 <div class="h-10 flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600" role="group" aria-label="Importar e exportar semana">
-                    <button onclick="openImportModal()" title="Importar semana" aria-label="Importar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
+                    <button onclick="openImportModal()" aria-label="Importar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
                         <i class="fa-solid fa-file-import"></i><span class="lbl">Importar</span>
                     </button>
                     <span class="w-px h-5 bg-slate-300 dark:bg-slate-500"></span>
-                    <button onclick="openExportModal()" title="Exportar semana" aria-label="Exportar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
+                    <button onclick="openExportModal()" aria-label="Exportar semana" class="h-8 flex items-center gap-2 px-3 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 hover:text-brand-push transition-all duration-200 active:scale-95">
                         <i class="fa-solid fa-file-export"></i><span class="lbl">Exportar</span>
                     </button>
                 </div>
 
-                <button onclick="clearDatabase()" aria-label="Resetar tudo" title="Resetar tudo" class="h-10 flex items-center gap-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all duration-200 active:scale-95">
+                <button onclick="clearDatabase()" aria-label="Resetar tudo" class="h-10 flex items-center gap-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-xs font-bold text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all duration-200 active:scale-95">
                     <i class="fa-solid fa-trash-can"></i><span class="lbl">Resetar tudo</span>
                 </button>
 
-                <button id="themeToggle" type="button" class="theme-spin w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-transparent" aria-label="Alternar tema claro/escuro" aria-pressed="false" title="Alternar tema">
+                <button id="themeToggle" type="button" class="theme-spin w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-full bg-transparent" aria-label="Alternar tema claro/escuro" aria-pressed="false">
                     <span class="theme-ico">
                         
                         <svg class="ti-yy" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" style="fill:var(--yy-light)"/><path d="M50 2 A48 48 0 0 1 50 98 A24 24 0 0 1 50 50 A24 24 0 0 0 50 2 Z" style="fill:var(--yy-dark)"/><circle cx="50" cy="26" r="7" style="fill:var(--yy-dark)"/><circle cx="50" cy="74" r="7" style="fill:var(--yy-light)"/></svg>
@@ -775,7 +1082,7 @@
                     <button onclick="showFullWeek()" class="flex items-center gap-2 bg-brand-push hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-wide transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/30">
                         <i class="fa-solid fa-calendar-days"></i><span>Ver Semana Completa</span>
                     </button>
-                    <button onclick="exportExercisesToPDF()" class="flex items-center justify-center bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-100 p-2.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-md" title="Organizar e exportar PDF">
+                    <button onclick="exportExercisesToPDF()" class="flex items-center justify-center bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-100 p-2.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-md" aria-label="Organizar e exportar PDF">
                         <i class="fa-solid fa-file-pdf text-lg"></i>
                     </button>
                 </div>
@@ -797,7 +1104,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
                         <input type="text" id="searchBar" onkeyup="searchExercise()" placeholder="Pesquisar exercício, nível ou argolas..." class="w-full pl-10 pr-3 py-2.5 bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-push shadow-inner transition">
                     </div>
-                    <button type="button" onclick="openNewExerciseModal()" aria-label="Adicionar exercício" title="Adicionar exercício" class="bg-brand-neon hover:bg-[#2fe00f] text-slate-900 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 active:scale-95 shrink-0" style="background-color: #39ff14;">
+                    <button type="button" onclick="openNewExerciseModal()" aria-label="Adicionar exercício" class="bg-brand-neon hover:bg-[#2fe00f] text-slate-900 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 active:scale-95 shrink-0" style="background-color: #39ff14;">
                         <i class="fa-solid fa-plus-circle text-base"></i><span class="hidden sm:inline">Adicionar Exercício</span>
                     </button>
                 </div>
@@ -856,9 +1163,6 @@
 
             <div id="viewWorkoutList" class="flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-2 my-2"></div>
 
-            <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end shrink-0">
-                <button onclick="closeViewWorkout()" class="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition">Fechar</button>
-            </div>
         </div>
     </div>
 
@@ -881,7 +1185,6 @@
 
             <div id="fullWeekList" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4 items-start pr-2 my-2"></div>
 
-            <p class="pt-1 text-center text-[10px] leading-tight font-medium text-slate-400/80 dark:text-slate-500/80 shrink-0">Clique num dia para ir até ele · "Abrir" inicia o treino</p>
         </div>
     </div>
 
@@ -989,7 +1292,7 @@
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
                 <div>
                     <h3 class="text-2xl font-black text-slate-800 dark:text-white" id="builderTitle">Montar Treino do Dia</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Selecione os exercícios que compõem este treino.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Marque os exercícios e ajuste níveis, séries, repetições ou combos.</p>
                 </div>
                 <button onclick="closeWorkoutBuilder()" class="close-spin text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-slate-700 p-2 rounded-full shadow-sm"><span class="close-ico"><svg class="ci-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg class="ci-sh" viewBox="-5 -4 110 110" aria-hidden="true"><g style="fill:var(--sh-fill,#bb0e19)"><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(0 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(120 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(240 50 50)"/><circle cx="50" cy="50" r="17"/></g><g fill="none" style="stroke:var(--sh-ring,#d1202a)" stroke-width="1.6"><circle cx="50" cy="50" r="10"/><circle cx="50" cy="50" r="5.5"/></g><circle cx="50" cy="50" r="2.2" style="fill:var(--sh-ring,#d1202a)"/></svg></span></button>
             </div>
@@ -998,7 +1301,7 @@
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
                     <input type="text" id="builderSearch" oninput="renderBuilderList()" onkeydown="onBuilderSearchKey(event)" autocomplete="off" placeholder="Buscar no catálogo..." class="w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-push transition">
-                    <button type="button" id="builderSearchClear" onclick="clearBuilderSearch()" title="Limpar busca" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-600 text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:text-white transition flex items-center justify-center"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                    <button type="button" id="builderSearchClear" onclick="clearBuilderSearch()" aria-label="Limpar busca" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-600 text-slate-600 dark:text-slate-200 hover:bg-red-500 hover:text-white transition flex items-center justify-center"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                 </div>
                 <select id="builderCategoryFilter" onchange="renderBuilderList()" class="bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold">
                     <option value="ALL">Todas as Categorias</option>
@@ -1014,7 +1317,7 @@
                 <button type="button" id="builderSelectVisibleBtn" onclick="toggleBuilderVisible()" class="text-[11px] font-bold text-brand-push hover:underline active:scale-95 transition"></button>
             </div>
 
-            <div id="builderExerciseList" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2 my-2"></div>
+            <div id="builderExerciseList" class="flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-2 my-2"></div>
 
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 <span class="text-xs font-bold text-slate-500 dark:text-slate-400 inline-block" id="builderSelectedCounter">0 exercícios selecionados</span>
@@ -1042,7 +1345,7 @@
                     <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center justify-between mb-3">
                             <h4 class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Dicas de Execução</h4>
-                            <button onclick="toggleEditList('tips')" class="text-slate-400 hover:text-brand-push transition p-1" title="Editar dicas"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="toggleEditList('tips')" class="text-slate-400 hover:text-brand-push transition p-1" aria-label="Editar dicas"><i class="fa-solid fa-pen text-xs"></i></button>
                         </div>
                         <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2" id="detailTips"></ul>
                         <div class="hidden space-y-2" id="detailTipsEditor"></div>
@@ -1050,7 +1353,7 @@
                     <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center justify-between mb-3">
                             <h4 class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Erros Comuns</h4>
-                            <button onclick="toggleEditList('mistakes')" class="text-slate-400 hover:text-brand-push transition p-1" title="Editar erros comuns"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="toggleEditList('mistakes')" class="text-slate-400 hover:text-brand-push transition p-1" aria-label="Editar erros comuns"><i class="fa-solid fa-pen text-xs"></i></button>
                         </div>
                         <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2" id="detailMistakes"></ul>
                         <div class="hidden space-y-2" id="detailMistakesEditor"></div>
@@ -1156,7 +1459,7 @@
                             <h4 class="text-sm font-black text-slate-800">Organização</h4>
                             <p class="text-[10px] text-slate-500">Use ▲ ▼ para alterar a ordem.</p>
                         </div>
-                        <button onclick="resetPdfOrganization()" class="text-[10px] font-bold text-slate-500 hover:text-red-500 px-2 py-1 rounded-lg hover:bg-slate-100" title="Repor ordem original">
+                        <button onclick="resetPdfOrganization()" class="text-[10px] font-bold text-slate-500 hover:text-red-500 px-2 py-1 rounded-lg hover:bg-slate-100" aria-label="Repor ordem original">
                             <i class="fa-solid fa-rotate-left mr-1"></i> Repor
                         </button>
                     </div>
@@ -1292,7 +1595,7 @@
             const m = LEVELS[level];
             if (!m) return '';
             const bars = [1, 2, 3, 4].map(i => `<i style="display:inline-block;width:3px;height:${3 + i * 2}px;border-radius:1px;background:currentColor;opacity:${i <= m.order ? 1 : 0.22}"></i>`).join('');
-            return `<span class="level-tag" style="color:${m.color}" title="Nível de dificuldade: ${m.label}"><span style="display:inline-flex;align-items:flex-end;gap:1px">${bars}</span>${prefix}${m.label}</span>`;
+            return `<span class="level-tag" style="color:${m.color}"><span style="display:inline-flex;align-items:flex-end;gap:1px">${bars}</span>${prefix}${m.label}</span>`;
         }
         // Remove "(Elite)", "(Avançado)", "- Iniciante", etc. do nome e devolve o nível que lá estava.
         const LEVEL_TERM_RE = '(elite|iniciante|b[áa]sico|intermedi[áa]rio|avan[çc]ado|mestre)';
@@ -1893,15 +2196,29 @@
 
         function formatScheme(text) {
             if (!text) return '';
-            let out = text.replace(/(\d+)x(\d+(?:-\d+)?)/g, (m, sets, reps) =>
-                `<span class="text-brand-push dark:text-brand-neon font-black">${sets}×</span><span class="text-brand-legs font-black">${reps}</span>`);
-            out = out.replace(/(\d+)s(?!\w)/g, (m, secs) => `<span class="text-brand-core font-black">${secs}s</span>`);
+            let out = text.replace(/(\d+)\s*[x×]\s*(\d+(?:-\d+)?)(s(?!\w))?/g, (m, sets, reps, sec) =>
+                `<span class="sc-sets">${sets}×</span><span class="${sec ? 'sc-secs' : 'sc-reps'}">${reps}${sec ? 's' : ''}</span>`);
+            out = out.replace(/(\d+)s(?!\w)/g, (m, secs) => `<span class="sc-secs">${secs}s</span>`);
             return out;
         }
 
         function setVariationIndex(id, index) { currentVariationIndexMap[id] = index; renderExercises(); }
 
         // ============ RENDERING DA GRELHA DE EXERCÍCIOS ============
+        function catLevelHtml(item) {
+            const tag = levelTagHtml(item.level), n = (item.variations || []).length;
+            if (n < 2) return tag ? `<span class="cat-lvl-static">${tag}</span>` : '';
+            return `<span class="cat-lvl-wrap"><button type="button" class="cat-lvl-btn" aria-haspopup="true" aria-expanded="false" aria-label="Escolher nível / progressão (${n} níveis)" title="${n} níveis: toque para escolher"><span class="cat-lvl-cnt"><i class="fa-solid fa-layer-group"></i>${n}</span>${tag}<i class="fa-solid fa-chevron-down cat-lvl-chev"></i></button></span>`;
+        }
+        function closeCatLvlMenus() {
+            document.querySelectorAll('body > .cat-lvl-menu').forEach(mn => mn.remove());
+            document.querySelectorAll('.cat-lvl-btn[aria-expanded="true"]').forEach(bt => bt.setAttribute('aria-expanded', 'false'));
+        }
+        document.addEventListener('click', ev => { if (!ev.target.closest('.cat-lvl-menu, .cat-lvl-btn')) closeCatLvlMenus(); });
+        document.addEventListener('keydown', ev => { if (ev.key === 'Escape') closeCatLvlMenus(); });
+        window.addEventListener('resize', closeCatLvlMenus);
+        window.addEventListener('scroll', ev => { const t = ev.target; if (t && t.nodeType === 1 && t.closest('.cat-lvl-menu')) return; closeCatLvlMenus(); }, true);
+
         function renderExercises() {
             const grid = document.getElementById('exercisesGrid');
             grid.innerHTML = '';
@@ -1912,7 +2229,7 @@
                 const currentText = item.variations[currentIndex] || item.variations[0];
                 const numVars = item.variations.length;
                 const badgeHtml = numVars > 1
-                    ? `<span class="text-[10px] font-bold bg-brand-neon/20 dark:bg-[#39ff14]/10 text-green-700 dark:text-brand-neon px-2 py-1 rounded-md flex items-center gap-1 shadow-sm"><i class="fa-solid fa-layer-group"></i> ${numVars} Níveis</span>`
+                    ? ''
                     : `<span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-1 rounded-md shadow-sm">Padrão</span>`;
 
                 const c = categoryColors[item.category] || categoryColors['PUSH'];
@@ -1923,55 +2240,45 @@
 
                 const card = document.createElement('div');
                 card.dataset.exId = item.id;
-                card.className = "bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-300 dark:border-slate-700 shadow-xl hover:shadow-2xl hover:scale-[1.03] hover:z-10 relative transition-all duration-300 flex flex-col justify-between cursor-default";
+                card.className = "ex-card p-5 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.03] hover:z-10 relative transition-all duration-300 flex flex-col justify-between cursor-default";
+                card.style.setProperty('--c', c.solid);
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider ${c.text} ${c.bg} border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <span class="ex-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider shadow-sm">
                                     ${catIcon(item.category)} ${categoryLabels[item.category] || item.category}
                                 </span>
                                 <h4 class="text-base font-black text-slate-800 dark:text-white mt-3 leading-snug">${item.name}</h4>
-                                <div class="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
+                                <div class="flex flex-col items-start gap-1 mt-1">
                                     <span class="text-[10px] uppercase text-slate-400 tracking-wider font-semibold">${item.id}</span>
-                                    ${levelTagHtml(item.level)}
+                                    ${catLevelHtml(item)}
                                 </div>
                             </div>
-                            <div class="relative shrink-0 w-14 h-14 transition-transform duration-300 hover:scale-[1.1] cursor-pointer" onclick="openDetailModal('${item.id}')" title="Ver guia de execução">
+                            <div class="relative shrink-0 w-14 h-14 transition-transform duration-300 hover:scale-[1.1] cursor-pointer" onclick="openDetailModal('${item.id}')">
                                 ${graphicHtml}
                             </div>
                         </div>
                     </div>
                     <div class="mt-4">
                         <div class="flex justify-between items-center mb-1.5">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progressão Recomendada</span>
+                            <span class="ex-lbl text-[10px] font-black uppercase tracking-wider">Progressão Recomendada</span>
                             ${badgeHtml}
                         </div>
-                        <div class="flex items-stretch bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-600 shadow-inner group relative">
-                            <p class="flex-1 font-open-sans text-xs font-bold p-3 text-slate-900 dark:text-white leading-relaxed break-words bg-slate-200 dark:bg-slate-700 rounded-l-xl border-r border-slate-300 dark:border-slate-600">
-                                ${formatScheme(currentText)}
-                            </p>
-                            <div class="flex flex-col bg-slate-100 dark:bg-slate-800 shrink-0 rounded-r-xl w-10 z-10">
-                                ${item.variations.length > 1 ? `
-                                <div class="relative group/dropdown border-b border-slate-300 dark:border-slate-600 flex-1 flex flex-col items-center justify-center cursor-pointer hover:bg-brand-neon hover:text-slate-900 transition-colors text-slate-500 dark:text-slate-400 rounded-tr-xl">
-                                    <i class="fa-solid fa-list text-xs"></i>
-                                    <div class="absolute bottom-0 right-full mr-2 w-56 bg-white dark:bg-slate-800 shadow-2xl border border-slate-300 dark:border-slate-600 rounded-xl py-2 opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all duration-200 z-[100] translate-x-2 group-hover/dropdown:translate-x-0 cursor-default">
-                                        <div class="px-3 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700 text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">Escolher Nível</div>
-                                        <div class="max-h-40 overflow-y-auto custom-scrollbar flex flex-col gap-1 px-2">
-                                            ${item.variations.map((v, i) => `
-                                                <button onclick="event.stopPropagation(); setVariationIndex('${item.id}', ${i})" class="w-full px-3 py-1.5 text-[11px] font-bold text-left rounded-lg transition-colors ${i === currentIndex ? 'bg-brand-neon text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}">
-                                                    ${i === currentIndex ? '<i class="fa-solid fa-check mr-1"></i> ' : ''}${v.replace(/<[^>]*>?/gm, '')}
-                                                </button>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                </div>` : ''}
-                                <button onclick="openModal('${item.id}')" class="flex-1 px-2 py-2 hover:bg-brand-neon hover:text-slate-900 dark:hover:bg-brand-neon dark:hover:text-slate-900 transition-colors text-slate-500 dark:text-slate-400 text-xs font-bold flex flex-col items-center justify-center border-b border-slate-300 dark:border-slate-600" title="Editar Exercício"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="event.stopPropagation(); confirmDeleteExercise('${item.id}')" class="flex-1 px-2 py-2 hover:bg-red-500 hover:text-white transition-colors text-slate-500 dark:text-slate-400 text-xs font-bold flex flex-col items-center justify-center ${item.variations.length > 1 ? 'rounded-br-xl' : 'rounded-r-xl'}" title="Remover Exercício"><i class="fa-solid fa-trash"></i></button>
+                        <div class="ex-prog flex items-stretch rounded-xl shadow-inner group relative">
+                            <div class="cat-ed flex-1 min-w-0 rounded-l-xl" style="--c:${c.solid}"></div>
+                            <div class="ex-prog-side flex flex-col shrink-0 rounded-r-xl w-8 z-10">
+                                <button type="button" onclick="openModal('${item.id}')" class="ex-act ex-act-edit" aria-label="Editar Exercício" title="Editar">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="pen-ico"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></g></svg>
+                                </button>
+                                <button type="button" onclick="event.stopPropagation(); confirmDeleteExercise('${item.id}')" class="ex-act ex-act-del" aria-label="Remover Exercício" title="Remover">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="bin-lid"><path d="M3 6h18"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></g><g class="bin-body"><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M10 11v6"/><path d="M14 11v6"/></g></svg>
+                                </button>
                             </div>
                         </div>
                     </div>`;
                 grid.appendChild(card);
+                catEdWire(card, item);
             });
             const sb = document.getElementById('searchBar');
             if (sb && sb.value) searchExercise();
@@ -2036,7 +2343,7 @@
             } else if (count === 0) {
                 previewHtml = `<button type="button" onclick="openWorkoutBuilder('${sid}')" class="w-full rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-brand-push hover:text-brand-push hover:bg-blue-50/60 dark:hover:bg-blue-900/20 text-slate-400 transition-all duration-200 hover:scale-[1.02] active:scale-95 py-4 flex flex-col items-center gap-1 outline-none"><i class="fa-solid fa-circle-plus text-xl"></i><span class="text-[11px] font-bold">Nenhum exercício montado</span><span class="text-[10px] font-semibold opacity-80">Clique para montar o treino</span></button>`;
             } else {
-                const rows = shown.map((ex, i) => `<li class="slot-row clickable" onclick="openDetailModal('${ex.id}')"><span class="w-4 text-right font-black text-slate-400 shrink-0">${i + 1}</span><span class="flex-1 min-w-0 truncate font-semibold text-slate-700 dark:text-slate-200">${ex.name}</span>${levelBarsHtml(ex.level)}</li>`).join('');
+                const rows = shown.map((ex, i) => `<li class="slot-row hov"><span class="w-4 text-right font-black text-slate-400 shrink-0">${i + 1}</span><span class="flex-1 min-w-0 truncate font-semibold text-slate-700 dark:text-slate-200">${ex.name}</span>${levelBarsHtml(ex.level)}</li>`).join('');
                 const more = count > LIMIT
                     ? `<button type="button" onclick="toggleSlotExpanded('${sid}')" class="w-full mt-1.5 text-[10px] font-black uppercase tracking-wider text-brand-push hover:underline flex items-center justify-center gap-1.5 py-1 outline-none">${expanded ? 'Mostrar menos' : `Ver todos (${count})`}<i class="fa-solid fa-chevron-${expanded ? 'up' : 'down'}"></i></button>`
                     : '';
@@ -2189,8 +2496,16 @@
             rerenderWorkout();
         }
         function setWorkoutVariation(exId, index) {
-            currentVariationIndexMap[exId] = index;
-            renderExercises();
+            const slot = weeklySlots.find(s => s.id === currentViewSlotId);
+            if (slot) {
+                if (!slot.exVar) slot.exVar = {};
+                slot.exVar[exId] = index;
+                if (slot.exPlan) delete slot.exPlan[exId];   // escolher um nível volta ao esquema dele
+                savePlanToLocal();
+            } else {
+                currentVariationIndexMap[exId] = index;
+                renderExercises();
+            }
             rerenderWorkout();
         }
         function buildFromWorkoutModal() {
@@ -2221,6 +2536,8 @@
             });
             if (!ids.length) return;
             slot.selectedExercises = ids;
+            slot.exVar = {};
+            slot.exPlan = {};
             savePlanToLocal();
             refreshSlotCard(slot.id);
             showSlotWorkout(slot.id);
@@ -2289,7 +2606,7 @@
                 document.getElementById('viewWorkoutProgressBar').style.width = Math.round(doneCount / workoutList.length * 100) + '%';
 
                 workoutList.forEach((ex, idx) => {
-                    const activeVarIndex = currentVariationIndexMap[ex.id] || 0;
+                    const activeVarIndex = slotVarIndex(slot, ex);
                     const schemeText = ex.variations[activeVarIndex] || ex.variations[0];
                     const c = categoryColors[ex.category] || categoryColors['PUSH'];
                     const isDone = done.has(ex.id);
@@ -2298,8 +2615,8 @@
                     const itemCard = document.createElement('div');
                     itemCard.className = "wk-card bg-slate-50 dark:bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" + (isDone ? " wk-done" : "") + (canReorder ? " drag-item" : "");
                     itemCard.innerHTML = `
-                        <div class="flex justify-between items-center gap-2">
-                            <div class="flex items-center gap-2 min-w-0">
+                        <div class="wk-row flex justify-between items-center gap-2">
+                            <div class="wk-l flex items-center gap-2 min-w-0">
                                 <button type="button" onclick="toggleWorkoutDone('${ex.id}')" class="wk-check ${isDone ? 'on' : ''}" aria-pressed="${isDone}" aria-label="Marcar como feito">${isDone ? '<i class="fa-solid fa-check"></i>' : idx + 1}</button>
                                 ${canReorder ? `
                                 <span class="drag-handle text-slate-300 dark:text-slate-600 text-[10px] shrink-0"><i class="fa-solid fa-grip-vertical"></i></span>
@@ -2307,30 +2624,26 @@
                                     <button onclick="moveExerciseInSlot(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="w-5 h-4 flex items-center justify-center rounded text-[9px] transition ${idx === 0 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para cima"><i class="fa-solid fa-chevron-up"></i></button>
                                     <button onclick="moveExerciseInSlot(${idx}, 1)" ${idx === workoutList.length - 1 ? 'disabled' : ''} class="w-5 h-4 flex items-center justify-center rounded text-[9px] transition ${idx === workoutList.length - 1 ? 'text-slate-300 dark:text-slate-700 cursor-default' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-400'}" aria-label="Mover para baixo"><i class="fa-solid fa-chevron-down"></i></button>
                                 </div>` : ''}
-                                <div class="min-w-0">
+                                <div class="wk-nm min-w-0">
                                     <h4 class="text-xs font-black leading-tight text-slate-800 dark:text-white truncate">${ex.name}</h4>
-                                    <div class="flex items-center flex-wrap gap-x-2 leading-tight"><span class="text-[9px] font-bold ${c.text}">${ex.id} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}</div>
+                                    <div class="wk-tags flex items-center flex-nowrap whitespace-nowrap gap-x-2 leading-tight"><span class="text-[9px] font-bold ${c.text}">${ex.id} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <div class="text-right" title="Séries / Reps">
-                                    <div class="bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-black shadow-inner whitespace-nowrap">
-                                        ${formatScheme(schemeText)}
+                            <div class="wk-r flex items-center gap-2 shrink-0">
+                                <div class="text-right">
+                                    <div class="wk-sch bg-white dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-black shadow-inner text-right max-w-[52vw] sm:max-w-[280px]">
+                                        ${slotSchemeHtml(slot, ex)}
                                     </div>
                                 </div>
                                 <i class="fa-solid fa-chevron-down wk-chev ${isOpen ? 'rot' : ''}"></i>
                             </div>
                         </div>
                         ${isOpen ? `
-                        <div class="wk-expand mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            ${ex.variations.length ? `
-                            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">Progressão — escolha a que vai fazer</p>
-                            <div class="flex flex-wrap gap-1.5">
-                                ${ex.variations.map((v, i) => `<button type="button" onclick="setWorkoutVariation('${ex.id}', ${i})" class="wk-var ${i === activeVarIndex ? 'on' : ''}">${v.replace(/<[^>]*>?/gm, '')}</button>`).join('')}
+                        <div class="wk-expand mt-1">
+                            ${ex.variations.length ? `<div class="wk-vars">
+                                ${ex.variations.map((v, i) => { const pv = parseVariation(v); return `<button type="button" onclick="setWorkoutVariation('${ex.id}', ${i})" class="wk-var ${(i === activeVarIndex && !slotPlan(slot, ex)) ? 'on' : ''}"><span class="n">${escHtml(pv.pre || (ex.variations.length > 1 ? 'Esquema ' + (i + 1) : 'Série'))}</span><span class="s">${escHtml(varPlainText(pv))}</span></button>`; }).join('')}${slotPlan(slot, ex) ? `<span class="wk-var on static"><span class="n">Personalizado</span><span class="s">${escHtml(varPlainText(slotPlan(slot, ex)))}</span></span>` : ''}
                             </div>` : ''}
-                            <div class="mt-3 flex justify-end">
-                                <button type="button" onclick="openDetailModal('${ex.id}')" class="wk-guide"><i class="fa-solid fa-circle-info"></i> Ver guia de execução</button>
-                            </div>
+                            <button type="button" onclick="openDetailModal('${ex.id}')" class="wk-guide-ic" aria-label="Guia de execução"><i class="fa-solid fa-circle-info"></i></button>
                         </div>` : ''}`;
                     itemCard.addEventListener('click', ev => {
                         if (ev.target.closest('button, a')) return;
@@ -2506,7 +2819,7 @@
                     itemsHtml = `<div class="fw-empty"><i class="fa-solid fa-folder-open"></i> Nenhum exercício selecionado para este dia.</div>`;
                 } else {
                     itemsHtml = workoutList.map((ex, idx) => {
-                        const activeVarIndex = currentVariationIndexMap[ex.id] || 0;
+                        const activeVarIndex = slotVarIndex(slot, ex);
                         const schemeText = ex.variations[activeVarIndex] || ex.variations[0];
                         const ec = categoryColors[ex.category] || categoryColors['PUSH'];
                         return `
@@ -2518,7 +2831,7 @@
                                     <div class="flex items-center flex-wrap gap-x-2 gap-y-0.5"><span class="text-[10px] font-bold ${ec.text}">${escHtml(ex.id)} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}</div>
                                 </div>
                             </div>
-                            <div class="fw-scheme">${formatScheme(schemeText)}</div>
+                            <div class="fw-scheme">${slotSchemeHtml(slot, ex)}</div>
                         </div>`;
                     }).join('');
                 }
@@ -2549,7 +2862,7 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             ${today ? '<span class="fw-today">Hoje</span>' : ''}
-                            <button type="button" class="fw-open" onclick="openLiveSession('${slot.id}')" title="Acompanhar o treino série a série"><i class="fa-solid fa-play"></i> Abrir</button>
+                            <button type="button" class="fw-open" onclick="openLiveSession('${slot.id}')" aria-label="Acompanhar o treino série a série"><i class="fa-solid fa-play"></i> Abrir</button>
                         </div>
                     </div>
                     ${notesHtml}
@@ -2638,9 +2951,19 @@
             return { sets: Math.max(1, +m[1]), target: m[2].replace(/\s+/g, ''), unit: u ? (u === 'min' ? 'min' : 's') : 'reps',
                      note: t.slice(m.index + m[0].length).replace(/^[\s,;–-]+/, '').trim() };
         }
-        function liveTxt(ex) { return ex.variations[currentVariationIndexMap[ex.id] || 0] || ex.variations[0] || ''; }
+        function liveTxt(ex) { return slotSchemeText(weeklySlots.find(s => s.id === liveSlotId), ex); }
         function liveP(ex) { return parseScheme(liveTxt(ex)); }
         function liveTarget(p) { return !p.target ? (p.note || 'Livre') : p.unit === 'reps' ? `${p.target} ${p.target === '1' ? 'rep' : 'reps'}` : `${p.target} ${p.unit}`; }
+        // combo: blocos da série (ex. 10 s L-sit + 10 reps Dips); null quando o exercício não é combo
+        function liveBlocks(ex) {
+            const pl = slotPlan(weeklySlots.find(s => s.id === liveSlotId), ex) || parseVariation(liveTxt(ex));
+            return pl && pl.blocks.length > 1 ? pl.blocks : null;
+        }
+        function liveBlkTxt(b) { return b.n + ' ' + (b.u === 's' ? 's' : b.n === '1' ? 'rep' : 'reps'); }
+        function liveComboHtml(bl) {
+            return bl.map((b, i) => `${i ? '<span class="ls-arr">+</span>' : ''}<span class="ls-step"><span class="k">${i + 1}</span><span class="v">${escHtml(liveBlkTxt(b))}</span>${b.l ? `<span class="l">${escHtml(b.l)}</span>` : ''}</span>`).join('');
+        }
+        function liveChipTxt(ex, p) { const bl = liveBlocks(ex); return bl ? bl.map(b => b.n + (b.u === 's' ? 's' : '')).join('+') : liveTarget(p); }
         function liveDone(i) { const ex = liveEx[i]; return (liveSt.sets[ex.id] || 0) >= liveP(ex).sets; }
         function liveNextIdx(from) { for (let k = 1; k < liveEx.length; k++) { const i = (from + k) % liveEx.length; if (!liveDone(i)) return i; } return -1; }
         function liveSave() { liveStore[liveSlotId] = liveSt; try { localStorage.setItem(LIVE_KEY, JSON.stringify(liveStore)); } catch (e) {} }
@@ -2705,28 +3028,28 @@
         function liveAudioInit() {
             try { if (!liveAC) liveAC = new (window.AudioContext || window.webkitAudioContext)(); if (liveAC.state === 'suspended') liveAC.resume(); } catch (e) {}
         }
-        function liveBeep(freq, dur, delay) {
+        function liveBeep(freq, dur, delay, vol, wave) {
             if (!liveTSound) return;
             try {
                 liveAudioInit(); if (!liveAC) return;
                 const t0 = liveAC.currentTime + (delay || 0), o = liveAC.createOscillator(), g = liveAC.createGain();
-                o.type = 'sine'; o.frequency.value = freq;
-                g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.28, t0 + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                o.type = wave || 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.28, t0 + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
                 o.connect(g); g.connect(liveAC.destination); o.start(t0); o.stop(t0 + dur + 0.03);
             } catch (e) {}
         }
         function liveTimerHtml() {
-            const pre = LIVE_PRESETS.map(([s, l]) => `<button type="button" class="ls-t2-p${liveTDur === s ? ' on' : ''}" data-s="${s}" onclick="liveTimerPreset(${s})" title="Descanso de ${l}">${l}</button>`).join('');
+            const pre = LIVE_PRESETS.map(([s, l]) => `<button type="button" class="ls-t2-p${liveTDur === s ? ' on' : ''}" data-s="${s}" onclick="liveTimerPreset(${s})" aria-label="Descanso de ${l}">${l}</button>`).join('');
             return `<div class="ls-t2" id="liveTimer"><div class="ls-t2-row">`
                 + `<i class="fa-solid fa-stopwatch ls-t2-ico"></i>`
-                + `<input id="liveTimerInput" type="text" inputmode="numeric" maxlength="5" value="${liveFmt(liveTLeft)}" title="Clique para editar (mm:ss ou segundos)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()" onchange="liveTimerEdit(this.value)">`
-                + `<button type="button" id="liveTimerBtn" class="ls-t2-play" onclick="liveTimerToggle()" title="Iniciar / pausar"><i class="fa-solid ${liveTRun ? 'fa-pause' : 'fa-play'}"></i></button>`
-                + `<button type="button" class="ls-t2-b" onclick="liveTimerReset()" title="Zerar"><i class="fa-solid fa-rotate-left"></i></button>`
-                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(-15)" title="Tirar 15 segundos">−15</button>`
-                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(15)" title="Somar 15 segundos">+15</button>`
+                + `<input id="liveTimerInput" type="text" inputmode="numeric" maxlength="5" value="${liveFmt(liveTLeft)}" aria-label="Clique para editar (mm:ss ou segundos)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()" onchange="liveTimerEdit(this.value)">`
+                + `<button type="button" id="liveTimerBtn" class="ls-t2-play" onclick="liveTimerToggle()" aria-label="Iniciar / pausar"><i class="fa-solid ${liveTRun ? 'fa-pause' : 'fa-play'}"></i></button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerReset()" aria-label="Zerar"><i class="fa-solid fa-rotate-left"></i></button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(-15)" aria-label="Tirar 15 segundos">−15</button>`
+                + `<button type="button" class="ls-t2-b" onclick="liveTimerAdd(15)" aria-label="Somar 15 segundos">+15</button>`
                 + `<span class="ls-t2-sep"></span>${pre}<span class="ls-t2-grow"></span>`
-                + `<button type="button" id="liveTimerSnd" class="ls-t2-b" onclick="liveTimerSoundToggle()" title="Som ao terminar"><i class="fa-solid fa-volume-high"></i></button>`
-                + `<button type="button" id="liveTimerAuto" class="ls-t2-b" onclick="liveTimerAutoToggle()" title="Descanso automático: inicia sozinho ao concluir cada série"><i class="fa-solid fa-bolt"></i><span>Auto</span></button>`
+                + `<button type="button" id="liveTimerSnd" class="ls-t2-b" onclick="liveTimerSoundToggle()" aria-label="Som ao terminar"><i class="fa-solid fa-volume-high"></i></button>`
+                + `<button type="button" id="liveTimerAuto" class="ls-t2-b" onclick="liveTimerAutoToggle()" aria-label="Descanso automático: inicia sozinho ao concluir cada série"><i class="fa-solid fa-bolt"></i><span>Auto</span></button>`
                 + `</div><div class="ls-t2-bar"><i id="liveTimerBar"></i></div></div>`;
         }
         function liveTimerPaint(force) {
@@ -2797,8 +3120,9 @@
             liveTLastSec = liveTLeft;
             if (liveTLeft > 0) { liveTimerPaint(); return; }
             clearInterval(liveTInt); liveTRun = false; liveTFin = true;
-            liveBeep(1100, 0.18, 0); liveBeep(1100, 0.18, 0.26); liveBeep(1400, 0.32, 0.52);
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            // alarme final alto: 4 sequências de bipes agudos em onda quadrada, volume bem acima dos bipes da contagem
+            for (let k = 0; k < 4; k++) { const b = k * 0.85; liveBeep(1500, 0.16, b, 0.9, 'square'); liveBeep(1500, 0.16, b + 0.24, 0.9, 'square'); liveBeep(1900, 0.34, b + 0.48, 0.9, 'square'); }
+            if (navigator.vibrate) navigator.vibrate([300, 120, 300, 120, 500]);
             liveTimerPaint(true);
             const t = document.getElementById('liveTimer');
             if (t) { t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake'); }
@@ -2816,19 +3140,19 @@
                 main = `<div class="ls-hero text-center" style="--c:#16a34a"><div class="p-10"><div class="text-6xl mb-3">🏆</div><h2 class="text-3xl font-black text-slate-800 dark:text-white">Treino concluído!</h2><p class="text-sm font-semibold text-slate-500 mt-2">${total} séries em ${n} exercícios. Bom trabalho!</p><div class="ls-actions justify-center mt-6"><button type="button" class="ls-btn sec" onclick="liveRestart()"><i class="fa-solid fa-rotate-left"></i> Refazer treino</button><button type="button" class="ls-btn" onclick="liveBackToWeek()"><i class="fa-solid fa-calendar-week"></i> Voltar à semana</button></div></div></div>`;
             } else {
                 const ex = liveEx[cur], p = liveP(ex), c = col(ex), sd = liveSt.sets[ex.id] || 0, cd = sd >= p.sets;
-                const chips = Array.from({ length: p.sets }, (_, k) => `<button type="button" class="ls-chip ${k < sd ? 'done' : k === sd ? 'cur' : ''}${livePop === ex.id + ':' + k ? ' pop' : ''}" ${k < sd ? `onclick="liveGoSet(${k})" title="Voltar para a série ${k + 1}"` : 'disabled'}><span class="n">${k < sd ? '<i class="fa-solid fa-check"></i>' : k + 1}</span><span class="t">${escHtml(liveTarget(p))}</span></button>`).join('');
+                const chips = Array.from({ length: p.sets }, (_, k) => `<button type="button" class="ls-chip ${k < sd ? 'done' : k === sd ? 'cur' : ''}${livePop === ex.id + ':' + k ? ' pop' : ''}" ${k < sd ? `onclick="liveGoSet(${k})" aria-label="Voltar para a série ${k + 1}"` : 'disabled'}><span class="n">${k < sd ? '<i class="fa-solid fa-check"></i>' : k + 1}</span><span class="t">${escHtml(liveChipTxt(ex, p))}</span></button>`).join('');
                 const label = sd + 1 === p.sets ? (nx < 0 ? 'Finalizar treino' : 'Concluir exercício') : `Concluir série ${sd + 1}`;
                 main = `<div class="ls-hero" style="--c:${c.solid}"><div class="ls-top" style="background:${c.grad}"><span class="ls-kicker">Exercício ${cur + 1} de ${n}</span><h2>${escHtml(ex.name)}</h2></div><div class="p-4">
-                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3"><span class="text-xs font-bold ${c.text}">${escHtml(ex.id)} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}<span class="fw-scheme ml-auto">${formatScheme(liveTxt(ex))}</span></div>
-                    <div class="flex flex-wrap gap-2"><div class="ls-box"><small>Série atual</small>${cd ? '<b>✔</b><em>Exercício concluído</em>' : `<b>${sd + 1}</b><span class="of">de ${p.sets}</span>`}</div><div class="ls-box"><small>Meta por série</small><b style="font-size:26px">${escHtml(liveTarget(p))}</b>${p.target && p.note ? `<em>${escHtml(p.note)}</em>` : ''}</div></div>
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3"><span class="text-xs font-bold ${c.text}">${escHtml(ex.id)} · ${catShort(ex.category)}</span>${levelTagHtml(ex.level)}</div>
+                    <div class="flex flex-wrap gap-2"><div class="ls-box"><small>Série atual</small>${cd ? '<b>✔</b><em>Exercício concluído</em>' : `<b>${sd + 1}</b><span class="of">de ${p.sets}</span>`}</div>${liveBlocks(ex) ? `<div class="ls-box combo"><small>Meta por série · combo</small><div class="ls-combo">${liveComboHtml(liveBlocks(ex))}</div></div>` : `<div class="ls-box"><small>Meta por série</small><b style="font-size:26px">${escHtml(liveTarget(p))}</b>${p.target && p.note ? `<em>${escHtml(p.note)}</em>` : ''}</div>`}</div>
                     <div class="ls-sets">${chips}</div>
-                    <div class="ls-actions">${cd ? `<button type="button" class="ls-btn" onclick="liveGoSet(0)"><i class="fa-solid fa-rotate-left"></i> Refazer exercício</button>${nx >= 0 ? `<button type="button" class="ls-btn sec" onclick="liveGoEx(${nx})">Próximo exercício</button>` : ''}` : `<button type="button" class="ls-btn" onclick="liveCompleteSet()"><i class="fa-solid fa-check"></i> ${label}</button><button type="button" class="ls-btn sec" onclick="liveUndoSet()" ${cur === 0 && sd === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i> Voltar</button>`}<button type="button" class="ls-guide-ic" onclick="openDetailModal('${ex.id}')" title="Guia de execução" aria-label="Guia de execução"><i class="fa-solid fa-circle-info"></i></button></div>${liveTimerHtml()}</div></div>`;
+                    <div class="ls-actions">${cd ? `<button type="button" class="ls-btn" onclick="liveGoSet(0)"><i class="fa-solid fa-rotate-left"></i> Refazer exercício</button>${nx >= 0 ? `<button type="button" class="ls-btn sec" onclick="liveGoEx(${nx})">Próximo exercício</button>` : ''}` : `<button type="button" class="ls-btn" onclick="liveCompleteSet()"><i class="fa-solid fa-check"></i> ${label}</button><button type="button" class="ls-btn sec" onclick="liveUndoSet()" ${cur === 0 && sd === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i> Voltar</button>`}<button type="button" class="ls-guide-ic" onclick="openDetailModal('${ex.id}')" aria-label="Guia de execução"><i class="fa-solid fa-circle-info"></i></button></div>${liveTimerHtml()}</div></div>`;
                 const nE = nx >= 0 ? liveEx[nx] : null, pv = cur > 0 ? cur - 1 : -1, pE = pv >= 0 ? liveEx[pv] : null;
                 const prevCard = pE
-                    ? `<button type="button" class="ls-next prev" style="--c:${col(pE).solid}" onclick="liveGoEx(${pv})" title="Voltar para o exercício anterior"><span class="ls-ix">${pv + 1}</span><span class="min-w-0"><small><i class="fa-solid fa-chevron-left"></i>Exercício anterior</small><b>${escHtml(pE.name)}</b><em>${escHtml(pE.id)} · ${catShort(pE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(pE))}</span></button>`
+                    ? `<button type="button" class="ls-next prev" style="--c:${col(pE).solid}" onclick="liveGoEx(${pv})" aria-label="Voltar para o exercício anterior"><span class="ls-ix">${pv + 1}</span><span class="min-w-0"><small><i class="fa-solid fa-chevron-left"></i>Exercício anterior</small><b>${escHtml(pE.name)}</b><em>${escHtml(pE.id)} · ${catShort(pE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(pE))}</span></button>`
                     : `<div class="ls-next prev off" style="--c:#94a3b8"><span class="text-2xl">🚩</span><span class="min-w-0"><small>Primeiro exercício</small><b>Início do treino</b></span></div>`;
                 const nextCard = nE
-                    ? `<button type="button" class="ls-next" style="--c:${col(nE).solid}" onclick="liveGoEx(${nx})" title="Ir para o próximo exercício"><span class="ls-ix">${nx + 1}</span><span class="min-w-0"><small>Próximo exercício${nx < cur ? ' (pulado)' : ''}<i class="fa-solid fa-chevron-right"></i></small><b>${escHtml(nE.name)}</b><em>${escHtml(nE.id)} · ${catShort(nE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(nE))}</span></button>`
+                    ? `<button type="button" class="ls-next" style="--c:${col(nE).solid}" onclick="liveGoEx(${nx})" aria-label="Ir para o próximo exercício"><span class="ls-ix">${nx + 1}</span><span class="min-w-0"><small>Próximo exercício${nx < cur ? ' (pulado)' : ''}<i class="fa-solid fa-chevron-right"></i></small><b>${escHtml(nE.name)}</b><em>${escHtml(nE.id)} · ${catShort(nE.category)}</em></span><span class="fw-scheme ml-auto">${formatScheme(liveTxt(nE))}</span></button>`
                     : `<div class="ls-next" style="cursor:default"><span class="text-2xl">🏁</span><span class="min-w-0"><small>Último exercício</small><b>Ao concluir, o treino termina!</b></span></div>`;
                 main += `<div class="ls-nav">${prevCard}${nextCard}</div>`;
             }
@@ -2982,6 +3306,132 @@
         let builderVisibleIds = [];
         let builderRenderKey = '';
         let builderCloseTimer = null;
+        let builderVarMap = {};   // exId -> índice da variação (nível) escolhida neste montador
+        let builderPlanMap = {};  // exId -> { sets, blocks:[{n,u,l}], dirty } editado neste montador
+
+        // ----- Plano de séries/reps: "3 séries × (10 seg L-sit + 10 reps Dips)" -----
+        // bloco: n = quantidade (ex. "10" ou "12-15"), u = 'r' (repetições) | 's' (segundos), l = nome opcional
+        function parseVariation(text) {
+            const t = String(text || '').replace(/<[^>]*>?/gm, '').trim();
+            const m = t.match(/(\d+)\s*[x×]\s*(\d+(?:\s*-\s*\d+)?)(?:\s*(seg|s)(?![A-Za-zÀ-ÿ]))?/i);
+            if (!m) return { sets: 3, blocks: [{ n: '10', u: 'r', l: '' }], pre: '' };
+            const pre = t.slice(0, m.index).replace(/[\s:–-]+$/, '').trim().slice(0, 40);
+            let rem = t.slice(m.index + m[0].length).replace(/^[\s,;–-]+/, '').trim().replace(/^\((.*)\)$/, '$1').trim();
+            // combo: "3x10s L-sit + 10 Dips" -> vários movimentos na mesma série
+            const parts = rem.split(/\s*\+\s*(?=\d)/);
+            const blocks = [{ n: m[2].replace(/\s+/g, ''), u: m[3] ? 's' : 'r', l: parts[0].slice(0, 30) }];
+            parts.slice(1, 4).forEach(sp => {
+                const mm = sp.match(/^(\d+(?:\s*-\s*\d+)?)(?:\s*(seg|s)(?![A-Za-zÀ-ÿ]))?\s*(.*)$/i);
+                if (mm) blocks.push({ n: mm[1].replace(/\s+/g, ''), u: mm[2] ? 's' : 'r', l: mm[3].replace(/^[\s,;–-]+/, '').trim().slice(0, 30) });
+            });
+            return { sets: Math.min(20, Math.max(1, +m[1])), blocks, pre };
+        }
+        // texto simples "3× 10 s L-sit + 10 Dips" para etiquetas
+        function varPlainText(p) {
+            return p.sets + '× ' + p.blocks.map(b => b.n + (b.u === 's' ? ' s' : '') + (b.l ? ' ' + b.l : '')).join(' + ');
+        }
+        function normalizePlan(p) {
+            const sets = Math.min(20, Math.max(1, parseInt(p && p.sets, 10) || 3));
+            const blocks = ((p && p.blocks) || []).slice(0, 4).map(b => {
+                let n = String(b && b.n != null ? b.n : '').replace(/[^0-9-]/g, '');
+                if (!/^\d{1,3}(-\d{1,3})?$/.test(n)) n = String(parseInt(n, 10) || 10);
+                return { n, u: b && b.u === 's' ? 's' : 'r', l: String((b && b.l) || '').replace(/[<>`]/g, '').trim().slice(0, 30) };
+            });
+            return { sets, blocks: blocks.length ? blocks : [{ n: '10', u: 'r', l: '' }] };
+        }
+        function planText(p) {
+            return p.sets + 'x' + p.blocks.map(b => b.n + (b.u === 's' ? 's' : '') + (b.l ? ' ' + b.l : '')).join(' + ');
+        }
+        function planHtml(p) {
+            const blk = p.blocks.map(b => `<span class="${b.u === 's' ? 'sc-secs' : 'sc-reps'}">${escHtml(b.n)}${b.u === 's' ? 's' : ''}</span>${b.l ? ` <span class="font-semibold text-slate-500 dark:text-slate-400">${escHtml(b.l)}</span>` : ''}`).join('<span class="text-slate-400 font-bold"> + </span>');
+            return `<span class="sc-sets">${p.sets}×</span> ${blk}`;
+        }
+        function slotPlan(slot, ex) { return slot && slot.exPlan ? slot.exPlan[ex.id] : null; }
+        function slotSchemeText(slot, ex) {
+            const pl = slotPlan(slot, ex);
+            return pl ? planText(pl) : (ex.variations[slotVarIndex(slot, ex)] || ex.variations[0] || '');
+        }
+        function slotSchemeHtml(slot, ex) {
+            const pl = slotPlan(slot, ex);
+            return pl ? planHtml(pl) : formatScheme(slotSchemeText(slot, ex));
+        }
+
+        function builderPlanFor(ex) {
+            let p = builderPlanMap[ex.id];
+            if (!p) { p = parseVariation(ex.variations[builderVarIdx(ex)]); builderPlanMap[ex.id] = p; }
+            return p;
+        }
+        function builderMetaText(ex) {
+            const p = builderPlanMap[ex.id];
+            return p && p.dirty ? planText(p) : String(ex.variations[builderVarIdx(ex)] ?? '').replace(/<[^>]*>?/gm, '');
+        }
+        function builderEditorHtml(ex) {
+            const p = builderPlanFor(ex), cur = builderVarIdx(ex), multi = p.blocks.length > 1;
+            const lvl = (ex.variations || []).length > 1
+                ? `<select class="bld-sel" data-a="lvl" aria-label="Nível do exercício">${ex.variations.map((v, i) => `<option value="${i}"${i === cur ? ' selected' : ''}>${escHtml(String(v).replace(/<[^>]*>?/gm, ''))}</option>`).join('')}</select>` : '';
+            const blocks = p.blocks.map((b, i) => `${i ? '<div class="bld-ln bld-sep"><span class="bld-plus">+</span></div>' : ''}<div class="bld-ln"><span class="bld-blk"><input class="bld-num ${b.u === 's' ? 'n-s' : 'n-r'}" inputmode="numeric" maxlength="7" data-a="n" data-i="${i}" value="${escHtml(b.n)}" aria-label="Quantidade"><button type="button" class="bld-u ${b.u === 's' ? 'u-s' : 'u-r'}" data-a="u" data-i="${i}" aria-label="Alternar repetições / segundos">${b.u === 's' ? 'seg' : 'reps'}</button><input class="bld-lbl" maxlength="30" data-a="l" data-i="${i}" value="${escHtml(b.l)}" aria-label="Nome do movimento"><button type="button" class="bld-rm" data-a="${multi ? 'rm' : 'lc'}" data-i="${i}" aria-label="${multi ? 'Remover movimento' : 'Limpar texto'}" title="${multi ? 'Remover movimento' : 'Remover texto'}">×</button></span></div>`).join('');
+            return `<div class="bld-ln">${lvl}<span class="bld-blk"><input class="bld-num n-sets" inputmode="numeric" maxlength="2" data-a="sets" value="${p.sets}" aria-label="Séries"><span class="bld-t">séries</span></span></div>${blocks}${p.blocks.length < 4 ? '<button type="button" class="bld-add" data-a="add" aria-label="Adicionar repetição"><i class="fa-solid fa-plus"></i></button>' : ''}`;
+        }
+        function wireBuilderEditor(row, ex, ed) {
+            ed.dataset.ready = '1';
+            const meta = () => { const m = row.querySelector('.bld-meta'); if (m) m.innerHTML = formatScheme(escHtml(builderMetaText(ex))); };
+            const draw = () => {
+                ed.innerHTML = builderEditorHtml(ex);
+                const sl = ed.querySelector('select.bld-sel');
+                if (sl) enhanceSelect(sl, { wrapClass: 'bld-csel', minMenuWidth: 180 });
+                meta();
+            };
+            draw();
+            ['keydown', 'pointerdown', 'dblclick'].forEach(t => ed.addEventListener(t, ev => ev.stopPropagation()));
+            ed.addEventListener('input', ev => {
+                const t = ev.target, a = t.dataset.a, p = builderPlanFor(ex);
+                if (a === 'sets') {
+                    const v = parseInt(t.value.replace(/\D/g, ''), 10);
+                    t.value = isNaN(v) ? '' : String(Math.min(20, v));
+                    if (!isNaN(v) && v >= 1) p.sets = Math.min(20, v);
+                } else if (a === 'n') {
+                    t.value = t.value.replace(/[^0-9-]/g, '');
+                    p.blocks[+t.dataset.i].n = t.value;
+                } else if (a === 'l') {
+                    p.blocks[+t.dataset.i].l = t.value.replace(/[<>`]/g, '');
+                } else return;
+                p.dirty = true; meta();
+            });
+            ed.addEventListener('change', ev => {
+                if (ev.target.dataset.a !== 'lvl') return;
+                const i = +ev.target.value;
+                builderVarMap[ex.id] = i;
+                builderPlanMap[ex.id] = parseVariation(ex.variations[i]);   // o nível traz as suas séries × reps
+                draw();
+            });
+            ed.addEventListener('click', ev => {
+                ev.stopPropagation();
+                const b = ev.target.closest('button');
+                if (!b) return;
+                const p = builderPlanFor(ex), a = b.dataset.a, i = +b.dataset.i;
+                if (a === 'u') p.blocks[i].u = p.blocks[i].u === 's' ? 'r' : 's';
+                else if (a === 'rm') p.blocks.splice(i, 1);
+                else if (a === 'lc') p.blocks[i].l = '';
+                else if (a === 'add' && p.blocks.length < 4) p.blocks.push({ n: '10', u: 'r', l: '' });
+                else return;
+                p.dirty = true; draw();
+                if (a === 'add') { const l = ed.querySelectorAll('.bld-lbl'); if (l.length) l[l.length - 1].focus(); }
+            });
+        }
+
+        // Índice da variação (nível + séries × reps) de um exercício num dia: escolha do dia > escolha global > primeira
+        function slotVarIndex(slot, ex) {
+            const n = (ex.variations || []).length;
+            let v = slot && slot.exVar ? slot.exVar[ex.id] : undefined;
+            if (!Number.isInteger(v)) v = currentVariationIndexMap[ex.id] || 0;
+            return v >= 0 && v < n ? v : 0;
+        }
+        function builderVarIdx(ex) {
+            const n = (ex.variations || []).length;
+            let v = builderVarMap[ex.id];
+            if (!Number.isInteger(v)) v = currentVariationIndexMap[ex.id] || 0;
+            return v >= 0 && v < n ? v : 0;
+        }
 
         function highlightMatch(text, term) {
             if (!term) return escHtml(text);
@@ -2995,6 +3445,9 @@
             if (!slot) return;
             activeBuilderSlotId = slotId;
             builderSelectedSet = new Set(slot.selectedExercises || []);
+            builderVarMap = Object.assign({}, slot.exVar || {});
+            builderPlanMap = {};
+            Object.entries(slot.exPlan || {}).forEach(([id, pl]) => { builderPlanMap[id] = { ...normalizePlan(pl), dirty: true }; });
             clearTimeout(builderCloseTimer);
 
             document.getElementById('builderTitle').innerText = `Montar Treino — ${slot.title}`;
@@ -3037,6 +3490,10 @@
             const was = row.classList.contains('selected');
             row.classList.toggle('selected', on);
             row.setAttribute('aria-checked', on ? 'true' : 'false');
+            if (on) {
+                const ed = row.querySelector('.bld-ed');
+                if (ed && !ed.dataset.ready) { const ex = exercises.find(x => x.id === row.dataset.id); if (ex) wireBuilderEditor(row, ex, ed); }
+            }
             if (withPop && on !== was) { row.classList.remove('bld-pop', 'bld-enter'); void row.offsetWidth; row.classList.add('bld-pop'); }
         }
 
@@ -3086,14 +3543,15 @@
                     row.tabIndex = 0;
                     row.setAttribute('role', 'checkbox');
                     row.innerHTML = `
-                        <div class="flex items-center gap-3 min-w-0">
+                        <div class="flex items-center gap-2 min-w-0">
                             <span class="bld-check"><i class="fa-solid fa-check"></i></span>
                             <div class="min-w-0">
                                 <span class="bld-name">${highlightMatch(e.name, term)}</span>
-                                <div class="flex items-center flex-wrap gap-x-2 gap-y-0.5"><span class="text-[10px] font-bold ${c.text}">${escHtml(e.id)} · ${catShort(e.category)}</span>${levelTagHtml(e.level)}</div>
+                                <div class="flex items-center flex-wrap gap-x-2 leading-tight"><span class="text-[9px] font-bold ${c.text}">${escHtml(e.id)} · ${catShort(e.category)}</span>${levelTagHtml(e.level)}</div>
                             </div>
                         </div>
-                        <span class="bld-meta">${escHtml(String(e.variations[0]).replace(/<[^>]*>?/gm, ''))}</span>
+                        <span class="bld-meta">${formatScheme(escHtml(builderMetaText(e)))}</span>
+                        <div class="bld-ed"></div>
                     `;
                     row.addEventListener('click', () => toggleBuilderExercise(e.id));
                     row.addEventListener('keydown', ev => {
@@ -3151,6 +3609,15 @@
             const reopen = reopenWorkoutAfterBuilder;
             if (slot) {
                 slot.selectedExercises = Array.from(builderSelectedSet);
+                const chosen = {};
+                slot.selectedExercises.forEach(id => {
+                    const ex = exercises.find(x => x.id === id);
+                    if (ex && (ex.variations || []).length > 1) chosen[id] = builderVarIdx(ex);
+                });
+                slot.exVar = chosen;
+                const plans = {};
+                slot.selectedExercises.forEach(id => { const pl = builderPlanMap[id]; if (pl && pl.dirty) plans[id] = normalizePlan(pl); });
+                slot.exPlan = plans;
                 savePlanToLocal();
                 refreshSlotCard(slot.id);
             }
@@ -3252,6 +3719,8 @@
                 if (slot.selectedExercises && slot.selectedExercises.includes(id)) {
                     slot.selectedExercises = slot.selectedExercises.filter(exId => exId !== id);
                 }
+                if (slot.exVar) delete slot.exVar[id];
+                if (slot.exPlan) delete slot.exPlan[id];
             });
             savePlanToLocal();
 
@@ -3336,13 +3805,139 @@
             list.forEach(v => appendVariationRowToModal(v));
         }
 
+        function vrCompose(m) {
+            const pre = String(m.pre || '').replace(/[<>`:]/g, '').trim().slice(0, 40);
+            const t = planText(normalizePlan({ sets: m.sets, blocks: m.blocks }));
+            return pre ? pre + ': ' + t : t;
+        }
+        function vrEditorInner(m, lvlHtml) {
+            const multi = m.blocks.length > 1;
+            const blocks = m.blocks.map((b, i) => `${i ? '<div class="bld-ln bld-sep"><span class="bld-plus">+</span></div>' : ''}<div class="bld-ln"><span class="bld-blk"><input class="bld-num ${b.u === 's' ? 'n-s' : 'n-r'}" inputmode="numeric" maxlength="7" data-a="n" data-i="${i}" value="${escHtml(b.n)}" aria-label="Quantidade"><button type="button" class="bld-u ${b.u === 's' ? 'u-s' : 'u-r'}" data-a="u" data-i="${i}" aria-label="Alternar repetições / segundos">${b.u === 's' ? 'seg' : 'reps'}</button><input class="bld-lbl" maxlength="30" data-a="l" data-i="${i}" value="${escHtml(b.l)}" aria-label="Nome do movimento"><button type="button" class="bld-rm" data-a="${multi ? 'rm' : 'lc'}" data-i="${i}" aria-label="${multi ? 'Remover movimento' : 'Limpar texto'}" title="${multi ? 'Remover movimento' : 'Remover texto'}">×</button></span></div>`).join('');
+            const addBtn = m.blocks.length < 4 ? '<button type="button" class="vr-ico vr-add" data-a="add" aria-label="Adicionar repetição"><i class="fa-solid fa-plus"></i></button>' : '';
+            return `<div class="bld-ln">${lvlHtml || ''}<span class="bld-blk"><input class="bld-num n-sets" inputmode="numeric" maxlength="2" data-a="sets" value="${m.sets}" aria-label="Séries"><span class="bld-t">séries</span></span>${addBtn}</div>${blocks}`;
+        }
+        function vrDraw(row) { row.querySelector('.vr-ed').innerHTML = vrEditorInner(row._m); }
+
+        // ----- editor inline no cartão do catálogo (mesma forma do Montar Treino; grava no próprio exercício) -----
+        function catEdWire(card, item) {
+            const ed = card.querySelector('.cat-ed');
+            if (!ed) return;
+            const idxNow = () => Math.min(Math.max(currentVariationIndexMap[item.id] || 0, 0), item.variations.length - 1);
+            let m = parseVariation(item.variations[idxNow()]), saveT = null;
+            const draw = () => {
+                const cur = idxNow();
+                const lvl = '';   // nível já aparece no topo do cartão: sem seletor aqui
+                ed.innerHTML = vrEditorInner(m, lvl);
+                const sl = ed.querySelector('select.bld-sel');
+                if (sl) enhanceSelect(sl, { wrapClass: 'bld-csel', minMenuWidth: 190 });
+            };
+            const persist = () => {
+                const i = idxNow(), txt = vrCompose(m);
+                item.variations[i] = txt;
+                const sl = ed.querySelector('select.bld-sel');
+                if (sl && sl.options[i]) { sl.options[i].text = txt; sl.value = String(i); }
+                clearTimeout(saveT); saveT = setTimeout(saveToLocal, 350);
+            };
+            draw();
+            const lvlBtn = card.querySelector('.cat-lvl-btn');
+            if (lvlBtn) {
+                lvlBtn.addEventListener('click', ev => {
+                    ev.stopPropagation();
+                    const was = lvlBtn.getAttribute('aria-expanded') === 'true';
+                    closeCatLvlMenus();
+                    if (was) return;
+                    const cur = idxNow();
+                    const menu = document.createElement('div');
+                    menu.className = 'cat-lvl-menu';
+                    menu.setAttribute('role', 'menu');
+                    menu.innerHTML = item.variations.map((v, k) => {
+                        const pv = parseVariation(v);
+                        return `<button type="button" role="menuitemradio" aria-checked="${k === cur}" class="cat-lvl-item${k === cur ? ' on' : ''}" data-k="${k}"><span class="nm">${escHtml(pv.pre || ('Nível ' + (k + 1)))}</span><span class="sc">${escHtml(varPlainText(pv))}</span></button>`;
+                    }).join('');
+                    menu.style.visibility = 'hidden';
+                    document.body.appendChild(menu);
+                    const r = lvlBtn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+                    const left = Math.min(Math.max(8, r.left), Math.max(8, window.innerWidth - mw - 8));
+                    let top = r.bottom + 4;
+                    if (top + mh > window.innerHeight - 8 && r.top - mh - 4 > 8) top = r.top - mh - 4;
+                    menu.style.left = left + 'px'; menu.style.top = top + 'px'; menu.style.visibility = '';
+                    lvlBtn.setAttribute('aria-expanded', 'true');
+                    menu.addEventListener('click', e2 => {
+                        e2.stopPropagation();
+                        const it = e2.target.closest('.cat-lvl-item');
+                        if (!it) return;
+                        currentVariationIndexMap[item.id] = +it.dataset.k;   // dificuldade escolhida entre as progressões do exercício
+                        m = parseVariation(item.variations[idxNow()]);
+                        draw(); closeCatLvlMenus();
+                        clearTimeout(saveT); saveT = setTimeout(saveToLocal, 350);
+                    });
+                });
+            }
+            ed.addEventListener('input', ev => {
+                const t = ev.target, a = t.dataset.a;
+                if (a === 'sets') {
+                    const v = parseInt(t.value.replace(/\D/g, ''), 10);
+                    t.value = isNaN(v) ? '' : String(Math.min(20, v));
+                    if (!isNaN(v) && v >= 1) m.sets = Math.min(20, v);
+                } else if (a === 'n') { t.value = t.value.replace(/[^0-9-]/g, ''); m.blocks[+t.dataset.i].n = t.value; }
+                else if (a === 'l') m.blocks[+t.dataset.i].l = t.value.replace(/[<>`]/g, '');
+                else return;
+                persist();
+            });
+            ed.addEventListener('change', ev => {
+                if (ev.target.dataset.a !== 'lvl') return;
+                currentVariationIndexMap[item.id] = +ev.target.value;
+                m = parseVariation(item.variations[+ev.target.value]);
+                draw();
+            });
+            ed.addEventListener('click', ev => {
+                const b = ev.target.closest('button');
+                if (!b || b.classList.contains('csel-btn')) return;
+                const a = b.dataset.a, i = +b.dataset.i;
+                if (a === 'u') m.blocks[i].u = m.blocks[i].u === 's' ? 'r' : 's';
+                else if (a === 'rm') m.blocks.splice(i, 1);
+                else if (a === 'lc') m.blocks[i].l = '';
+                else if (a === 'add' && m.blocks.length < 4) m.blocks.push({ n: '10', u: 'r', l: '' });
+                else return;
+                persist(); draw();
+                if (a === 'add') { const l = ed.querySelectorAll('.bld-lbl'); if (l.length) l[l.length - 1].focus(); }
+            });
+        }
+        function vrSync(row) { row.querySelector('.variation-input').value = vrCompose(row._m); }
+
         function appendVariationRowToModal(value = '') {
             const container = document.getElementById('modalVariationsContainer');
             const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 variation-row';
-            row.innerHTML = `
-                <input type="text" value="${value.replace(/"/g, '&quot;')}" placeholder="Ex: 3x12 ou 3 x 30s" class="w-full p-3 rounded-xl text-sm border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-open-sans font-bold focus:ring-2 focus:ring-brand-neon outline-none shadow-inner variation-input">
-                <button onclick="removeVariationRow(this)" class="text-slate-400 hover:text-red-500 transition p-3 bg-slate-100 hover:bg-red-50 dark:bg-slate-700/50 dark:hover:bg-red-900/40 rounded-xl shrink-0" title="Remover Progressão"><i class="fa-solid fa-trash w-4 h-4 flex items-center justify-center"></i></button>`;
+            row.className = 'variation-row vr-row';
+            const pm = parseVariation(value || '3x10');
+            row._m = { pre: pm.pre || '', sets: pm.sets, blocks: pm.blocks.map(b => ({ ...b })) };
+            row.innerHTML = `<input type="hidden" class="variation-input"><input class="vr-pre" maxlength="40" placeholder="Nível (ex: Básico)" aria-label="Nome do nível" value="${escHtml(row._m.pre)}"><div class="vr-ed"></div><button type="button" class="vr-del" onclick="removeVariationRow(this)" aria-label="Remover Progressão"><i class="fa-solid fa-trash"></i></button>`;
+            row.querySelector('.variation-input').value = value || vrCompose(row._m);   // texto original intacto até editares
+            vrDraw(row);
+            row.addEventListener('input', ev => {
+                const t = ev.target, a = t.dataset.a, m = row._m;
+                if (t.classList.contains('vr-pre')) m.pre = t.value;
+                else if (a === 'sets') {
+                    const v = parseInt(t.value.replace(/\D/g, ''), 10);
+                    t.value = isNaN(v) ? '' : String(Math.min(20, v));
+                    if (!isNaN(v) && v >= 1) m.sets = Math.min(20, v);
+                } else if (a === 'n') { t.value = t.value.replace(/[^0-9-]/g, ''); m.blocks[+t.dataset.i].n = t.value; }
+                else if (a === 'l') m.blocks[+t.dataset.i].l = t.value.replace(/[<>`]/g, '');
+                else return;
+                vrSync(row);
+            });
+            row.addEventListener('click', ev => {
+                const b = ev.target.closest('.vr-ed button');
+                if (!b) return;
+                const m = row._m, a = b.dataset.a, i = +b.dataset.i;
+                if (a === 'u') m.blocks[i].u = m.blocks[i].u === 's' ? 'r' : 's';
+                else if (a === 'rm') m.blocks.splice(i, 1);
+                else if (a === 'lc') m.blocks[i].l = '';
+                else if (a === 'add' && m.blocks.length < 4) m.blocks.push({ n: '10', u: 'r', l: '' });
+                else return;
+                vrDraw(row); vrSync(row);
+                if (a === 'add') { const l = row.querySelectorAll('.bld-lbl'); if (l.length) l[l.length - 1].focus(); }
+            });
             container.appendChild(row);
         }
 
@@ -3354,7 +3949,7 @@
 
         function removeVariationRow(btn) {
             const container = document.getElementById('modalVariationsContainer');
-            if (container.children.length > 1) btn.parentElement.remove();
+            if (container.children.length > 1) btn.closest('.variation-row').remove();
             else alert('Cada exercício precisa de ter pelo menos 1 progressão.');
         }
 
@@ -3552,7 +4147,9 @@
                     title: sl.title,
                     categories: getSlotCats(sl).slice(),
                     notes: sl.notes || '',
-                    exercises: (sl.selectedExercises || []).slice()
+                    exercises: (sl.selectedExercises || []).slice(),
+                    vars: Object.fromEntries(Object.entries(sl.exVar || {}).filter(([id, n]) => (sl.selectedExercises || []).includes(id) && Number.isInteger(n))),
+                    plans: Object.fromEntries(Object.entries(sl.exPlan || {}).filter(([id]) => (sl.selectedExercises || []).includes(id)))
                 })),
                 custom
             };
@@ -3609,11 +4206,24 @@
                 cats = cats.filter((c, k) => cats.indexOf(c) === k);
                 if (!cats.length) cats = ['PUSH'];
                 const ids = (Array.isArray(d.exercises) ? d.exercises : []).map(String).filter(id => SHARE_ID_RE.test(id));
+                const vars = {};
+                if (d.vars && typeof d.vars === 'object') ids.forEach(id => { const n = d.vars[id]; if (Number.isInteger(n) && n >= 0 && n < 50) vars[id] = n; });
+                const plans = {};
+                if (d.plans && typeof d.plans === 'object') ids.forEach(id => {
+                    const pl = d.plans[id];
+                    if (!pl || typeof pl !== 'object' || !Number.isInteger(pl.sets) || pl.sets < 1 || pl.sets > 20) return;
+                    const blocks = (Array.isArray(pl.blocks) ? pl.blocks : []).slice(0, 4)
+                        .filter(b => b && /^\d{1,3}(-\d{1,3})?$/.test(String(b.n)))
+                        .map(b => ({ n: String(b.n), u: b.u === 's' ? 's' : 'r', l: clean(b.l, 30) }));
+                    if (blocks.length) plans[id] = { sets: pl.sets, blocks };
+                });
                 return {
                     title: clean(d.title, 40) || ('Dia ' + (i + 1)),
                     categories: cats,
                     notes: clean(d.notes, 300),
-                    exercises: ids.filter((id, k) => ids.indexOf(id) === k)
+                    exercises: ids.filter((id, k) => ids.indexOf(id) === k),
+                    vars,
+                    plans
                 };
             });
             return { week, custom };
@@ -3772,13 +4382,19 @@
             // 2) Semana: substitui os dias e os exercícios escolhidos
             weeklySlots = pkg.week.map((d, i) => {
                 const ids = d.exercises.map(id => idMap[id] || id).filter(id => exercises.some(e => e.id === id));
+                const exVar = {};
+                Object.keys(d.vars || {}).forEach(k => { const nid = idMap[k] || k; if (ids.includes(nid)) exVar[nid] = d.vars[k]; });
+                const exPlan = {};
+                Object.keys(d.plans || {}).forEach(k => { const nid = idMap[k] || k; if (ids.includes(nid)) exPlan[nid] = d.plans[k]; });
                 return {
                     id: 'slot-' + (i + 1),
                     title: d.title,
                     category: d.categories[0],
                     categories: d.categories.slice(),
                     notes: d.notes,
-                    selectedExercises: ids.filter((id, k) => ids.indexOf(id) === k)
+                    selectedExercises: ids.filter((id, k) => ids.indexOf(id) === k),
+                    exVar,
+                    exPlan
                 };
             });
 
@@ -3853,7 +4469,7 @@
     <!-- ============ CRONÓMETRO DE ISOMETRIA ============ -->
     <div class="timer-modal-backdrop" id="timerBackdrop">
         <div class="timer-modal-window" id="timerWindow">
-            <button class="timer-close-btn" onclick="closeTimer()" title="Fechar"><span class="close-ico"><svg class="ci-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg class="ci-sh" viewBox="-5 -4 110 110" aria-hidden="true"><g style="fill:var(--sh-fill,#bb0e19)"><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(0 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(120 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(240 50 50)"/><circle cx="50" cy="50" r="17"/></g><g fill="none" style="stroke:var(--sh-ring,#d1202a)" stroke-width="1.6"><circle cx="50" cy="50" r="10"/><circle cx="50" cy="50" r="5.5"/></g><circle cx="50" cy="50" r="2.2" style="fill:var(--sh-ring,#d1202a)"/></svg></span></button>
+            <button class="timer-close-btn" onclick="closeTimer()" aria-label="Fechar"><span class="close-ico"><svg class="ci-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg class="ci-sh" viewBox="-5 -4 110 110" aria-hidden="true"><g style="fill:var(--sh-fill,#bb0e19)"><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(0 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(120 50 50)"/><path d="M30 60 C26 38 40 14 64 4 C52 22 54 40 72 58 L50 50 Z" transform="rotate(240 50 50)"/><circle cx="50" cy="50" r="17"/></g><g fill="none" style="stroke:var(--sh-ring,#d1202a)" stroke-width="1.6"><circle cx="50" cy="50" r="10"/><circle cx="50" cy="50" r="5.5"/></g><circle cx="50" cy="50" r="2.2" style="fill:var(--sh-ring,#d1202a)"/></svg></span></button>
 
             <div class="timer-theme-container">
                 <span>TEMA DE FUNDO:</span>
@@ -4172,8 +4788,8 @@
                             <div class="text-[10px] text-slate-400">${escapePdfHtml(day.category)} · ${day.exercises.length} item(ns)</div>
                         </div>
                         <div class="flex gap-1 shrink-0">
-                            <button onclick="movePdfDay(${dayIdx}, -1)" ${dayIdx === 0 ? 'disabled' : ''} class="w-7 h-7 rounded-lg ${dayIdx === 0 ? 'text-slate-300 bg-slate-50' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}" title="Mover dia para cima"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
-                            <button onclick="movePdfDay(${dayIdx}, 1)" ${dayIdx === pdfDraftDays.length - 1 ? 'disabled' : ''} class="w-7 h-7 rounded-lg ${dayIdx === pdfDraftDays.length - 1 ? 'text-slate-300 bg-slate-50' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}" title="Mover dia para baixo"><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+                            <button onclick="movePdfDay(${dayIdx}, -1)" ${dayIdx === 0 ? 'disabled' : ''} class="w-7 h-7 rounded-lg ${dayIdx === 0 ? 'text-slate-300 bg-slate-50' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}" aria-label="Mover dia para cima"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
+                            <button onclick="movePdfDay(${dayIdx}, 1)" ${dayIdx === pdfDraftDays.length - 1 ? 'disabled' : ''} class="w-7 h-7 rounded-lg ${dayIdx === pdfDraftDays.length - 1 ? 'text-slate-300 bg-slate-50' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}" aria-label="Mover dia para baixo"><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
                         </div>
                     </div>
 
@@ -4181,10 +4797,10 @@
                         ${day.exercises.map((ex, exIdx) => `
                             <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-100 rounded-lg px-2 py-1.5">
                                 <span class="text-[9px] font-black text-slate-400 w-4">${exIdx + 1}</span>
-                                <span class="flex-1 text-[10px] font-semibold text-slate-700 truncate" title="${escapePdfHtml(ex.name)}">${escapePdfHtml(ex.name)}</span>
-                                <button onclick="movePdfExercise(${dayIdx}, ${exIdx}, -1)" ${exIdx === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md ${exIdx === 0 ? 'text-slate-300' : 'text-slate-500 hover:bg-slate-200'}" title="Mover exercício para cima"><i class="fa-solid fa-angle-up text-[9px]"></i></button>
-                                <button onclick="movePdfExercise(${dayIdx}, ${exIdx}, 1)" ${exIdx === day.exercises.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md ${exIdx === day.exercises.length - 1 ? 'text-slate-300' : 'text-slate-500 hover:bg-slate-200'}" title="Mover exercício para baixo"><i class="fa-solid fa-angle-down text-[9px]"></i></button>
-                                <button onclick="removePdfExercise(${dayIdx}, ${exIdx})" class="w-6 h-6 rounded-md text-red-400 hover:bg-red-50 hover:text-red-600" title="Remover exercício somente do PDF"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                                <span class="flex-1 text-[10px] font-semibold text-slate-700 truncate">${escapePdfHtml(ex.name)}</span>
+                                <button onclick="movePdfExercise(${dayIdx}, ${exIdx}, -1)" ${exIdx === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md ${exIdx === 0 ? 'text-slate-300' : 'text-slate-500 hover:bg-slate-200'}" aria-label="Mover exercício para cima"><i class="fa-solid fa-angle-up text-[9px]"></i></button>
+                                <button onclick="movePdfExercise(${dayIdx}, ${exIdx}, 1)" ${exIdx === day.exercises.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md ${exIdx === day.exercises.length - 1 ? 'text-slate-300' : 'text-slate-500 hover:bg-slate-200'}" aria-label="Mover exercício para baixo"><i class="fa-solid fa-angle-down text-[9px]"></i></button>
+                                <button onclick="removePdfExercise(${dayIdx}, ${exIdx})" class="w-6 h-6 rounded-md text-red-400 hover:bg-red-50 hover:text-red-600" aria-label="Remover exercício somente do PDF"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                             </div>
                         `).join('')}
                     </div>
